@@ -1,0 +1,30 @@
+{% extends 'app/base.html' %}
+{% block content %}
+ 
+<h1>Korisnički profil</h1>
+
+<form method="post" action="{% url 'accounts:change_email' %}">
+    {% csrf_token %}
+
+    {{ emailForm.as_p }}
+
+    <input type="submit">
+
+</form>
+
+{% if error_message %}
+<p class="alert alert-danger">Lozinka ne odgovara uvjetima.</p>
+{% endif %}
+
+<form method="post" action="{% url 'accounts:change_password' %}">
+    {% csrf_token %}
+
+    {{ passwordForm.as_p }}
+
+    <input type="submit">
+
+</form>
+
+
+
+{% endblock %}
