@@ -17,9 +17,9 @@ def register(request):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('login'))
-    else:
+    elif not request.user.is_authenticated:
         form = SignUpForm()
-
-
-    return render(request, 'registration/signup.html', {'form': form})
+        return render(request, 'registration/register.html', {'form': form})
+    else:
+        return HttpResponseRedirect('/')
     
