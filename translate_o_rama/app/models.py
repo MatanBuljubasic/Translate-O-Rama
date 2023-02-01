@@ -1,7 +1,7 @@
 from django.db import models
 from decimal import Decimal
 from django.core.validators import MinValueValidator
-
+from accounts.models import User
 
 # Create your models here.
 
@@ -28,6 +28,7 @@ STATUS_CHOICES = (
 )
 
 class Job(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(unique=True, max_length=120)
     description = models.TextField(blank=True)
     source_language = models.CharField(max_length=20)
