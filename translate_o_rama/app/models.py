@@ -28,7 +28,7 @@ STATUS_CHOICES = (
 )
 
 class Job(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='related1', on_delete=models.CASCADE)
     title = models.CharField(unique=True, max_length=120)
     description = models.TextField(blank=True)
     source_language = models.CharField(max_length=20)
@@ -36,7 +36,9 @@ class Job(models.Model):
     field = models.CharField(choices=FIELD_CHOICES, max_length=20)
     budget = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
     source_text = models.TextField()
-    translated_text = models.TextField()
+    translated_text = models.TextField(blank=True)
     status = models.CharField(choices=STATUS_CHOICES, default=STATUS_CHOICES[0], max_length=20)
+    translator = models.ForeignKey(User, null=True, related_name='related2', on_delete=models.DO_NOTHING, limit_choices_to={'is_translator': True})
 
-
+    def __str__(self):
+        return f"{self.title}"
