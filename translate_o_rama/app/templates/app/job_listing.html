@@ -1,0 +1,20 @@
+{% extends 'app/base.html' %}
+{% block content %}
+
+    <h1>Svi poslovi</h1>
+    {% for job in jobs %}
+        <div>
+            <p>{{ job.title }}</p> <br>
+            <p>{{ job.description }}</p>
+            <p>{{ job.source_launguage }}</p>
+            <p>{{ job.target_language }}</p>
+            <p>{{ job.get_field_display }}</p>
+            <p>{{ job.budget }}</p>
+            <p><a href="">{{ job.user.username }}</a></p>
+            <p><a href="/">Bid on Job</a></p>
+            <p><a href="/">Message User</a></p>
+        </div>
+        <br><br><br><br><br><br><br><br>
+
+    {% endfor %}
+{% endblock %}
