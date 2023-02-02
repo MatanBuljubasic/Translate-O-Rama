@@ -18,6 +18,8 @@ def post(request):
                 job.user = request.user
                 job.save()
                 return HttpResponseRedirect(reverse('accounts:custom_login'))
+            else:
+                return render(request, 'app/post_job.html', {'form': form})
         else:
             form = PostJobForm()
             return render(request, 'app/post_job.html', {'form': form})
