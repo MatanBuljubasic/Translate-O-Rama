@@ -18,17 +18,19 @@ def register(request):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('accounts:custom_login'))
+        else:
+            return render(request, 'registration/register.html', {'form': form})
     elif not request.user.is_authenticated:
         form = SignUpForm()
         return render(request, 'registration/register.html', {'form': form})
     else:
         return HttpResponseRedirect('/')
     
-def user_profile(request, error_message):
+def user_profile(request):
     if request.user.is_authenticated:
         emailForm = ChangeEmailForm(instance=request.user)
         passwordForm = ChangePasswordForm(request.user)
-        return render(request, 'registration/user_profile.html', {'emailForm': emailForm, 'passwordForm': passwordForm, 'error_message':error_message})
+        return render(request, 'registration/user_profile.html', {'emailForm': emailForm, 'passwordForm': passwordForm})
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))
 
@@ -38,9 +40,12 @@ def change_email(request):
             form = ChangeEmailForm(request.POST, instance=request.user)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect(reverse('accounts:user_profile', args=[0]))
+                return HttpResponseRedirect(reverse('accounts:user_profile'))
+            else:
+                passwordForm = ChangePasswordForm(request.user)
+                return render(request, 'registration/user_profile.html', {'emailForm': form, 'passwordForm': passwordForm})
         else:
-            return HttpResponseRedirect(reverse('accounts:user_profile', args=[0]))
+            return HttpResponseRedirect(reverse('accounts:user_profile'))
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))
 
@@ -50,10 +55,11 @@ def change_password(request):
             form = ChangePasswordForm(request.user, request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect(reverse('accounts:user_profile', args=[0]))
+                return HttpResponseRedirect(reverse('accounts:user_profile'))
             else:
-                return HttpResponseRedirect(reverse('accounts:user_profile', args=[1]))
+                emailForm = ChangeEmailForm(instance=request.user)
+                return render(request, 'registration/user_profile.html', {'emailForm': emailForm, 'passwordForm': form})
         else:
-            return HttpResponseRedirect(reverse('accounts:user_profile', args=[0]))
+            return HttpResponseRedirect(reverse('accounts:user_profile'))
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))

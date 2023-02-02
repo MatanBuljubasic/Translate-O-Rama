@@ -7,4 +7,6 @@ class PostJobForm(ModelForm):
     class Meta:
         model = Job
         exclude = ('user', 'translator', 'translated_text', 'status')
+
+        
     

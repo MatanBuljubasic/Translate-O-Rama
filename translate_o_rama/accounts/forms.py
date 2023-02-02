@@ -1,16 +1,22 @@
 from django import forms
 from accounts.models import User
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm, UserChangeForm
-from django.forms import ModelForm
+from django.forms import ModelForm, ValidationError
+from django.contrib.auth.password_validation import validate_password
+
 
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField()
-    is_translator = forms.BooleanField(label = 'Translator')
+    is_translator = forms.BooleanField(label = 'Translator', required=False)
+    username = forms.CharField(max_length=30)
 
     class Meta:
         model = User
         fields = ( 'email', 'username', 'is_translator', 'password1', 'password2' )
+
+    
+
 
 class ChangeEmailForm(UserChangeForm):
     email = forms.EmailField()
