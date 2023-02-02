@@ -4,7 +4,7 @@ from .models import Job
 # Register your models here.
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('user','translator', 'title', 'budget', 'status')
+    list_display = ('title', 'user', 'translator', 'budget', 'status')
     exclude = ('translated_text', )
 
 admin.site.register(Job, JobAdmin)

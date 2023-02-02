@@ -10,7 +10,7 @@ class SignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ( 'email', 'username', 'is_translator', 'password1' ,'password2' )
+        fields = ( 'email', 'username', 'is_translator', 'password1', 'password2' )
 
 class ChangeEmailForm(UserChangeForm):
     email = forms.EmailField()

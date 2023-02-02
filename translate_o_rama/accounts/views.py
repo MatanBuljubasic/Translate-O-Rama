@@ -8,7 +8,7 @@ from .forms import SignUpForm, ChangeEmailForm, ChangePasswordForm
 
 def custom_login(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect('/admin')
+        return HttpResponseRedirect(reverse('home'))
     else:
         return HttpResponseRedirect(reverse('login'))
     
@@ -17,14 +17,14 @@ def register(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('login'))
+            return HttpResponseRedirect(reverse('accounts:custom_login'))
     elif not request.user.is_authenticated:
         form = SignUpForm()
         return render(request, 'registration/register.html', {'form': form})
     else:
         return HttpResponseRedirect('/')
     
-def user_profile(request, error_message=0):
+def user_profile(request, error_message):
     if request.user.is_authenticated:
         emailForm = ChangeEmailForm(instance=request.user)
         passwordForm = ChangePasswordForm(request.user)

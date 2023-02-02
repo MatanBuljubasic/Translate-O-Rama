@@ -1,6 +1,6 @@
 from django.db import models
 from decimal import Decimal
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 from accounts.models import User
 
 # Create your models here.
@@ -36,9 +36,8 @@ class Job(models.Model):
     field = models.CharField(choices=FIELD_CHOICES, max_length=20)
     budget = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
     source_text = models.TextField()
-    rating = models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
     translated_text = models.TextField(blank=True)
-    status = models.CharField(choices=STATUS_CHOICES, default=STATUS_CHOICES[0], max_length=20)
+    status = models.CharField(choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0], max_length=20)
     translator = models.ForeignKey(User, null=True, blank=True, related_name='translator', on_delete=models.DO_NOTHING, limit_choices_to={'is_translator': True})
 
     def __str__(self):
