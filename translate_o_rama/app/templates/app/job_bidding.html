@@ -15,11 +15,13 @@
         </div>
 
         <div>
-            {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
 
-            {{ form.as_p }}
-        
-            <input type="submit">        
+                {{ form.as_p }}
+            
+                <input type="submit">        
+            </form>
         </div>
     </div>
 {% endblock %}

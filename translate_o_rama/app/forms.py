@@ -1,4 +1,4 @@
-from .models import Job
+from .models import Job, BiddingOffer
 from django.forms import ModelForm, ValidationError
 from django import forms
 from decimal import Decimal
@@ -18,4 +18,8 @@ class PostJobForm(ModelForm):
     
 class BiddingForm(ModelForm):
     quote = forms.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
-    exclude = ()
+
+    class Meta:
+        model = BiddingOffer
+        exclude = ('translator', 'job')
+        

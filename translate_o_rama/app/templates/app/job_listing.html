@@ -11,7 +11,7 @@
             <p>{{ job.get_field_display }}</p>
             <p>{{ job.budget }}</p>
             <p><a href="">{{ job.user.username }}</a></p>
-            <p><a href="{% url 'app:job_bidding' %}">Bid on Job</a></p>
+            <p><a href="{% url 'app:job_bidding' job.id %}">Bid on Job</a></p>
             <p><a href="/">Message User</a></p>
         </div>
         <br><br><br><br><br><br><br><br>

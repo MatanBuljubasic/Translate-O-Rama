@@ -42,3 +42,13 @@ class Job(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+
+class BiddingOffer(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    translator = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_translator': True})
+    quote = models.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
+
+    def __str__(self):
+        return f"{self.job} - {self.translator}"
+
