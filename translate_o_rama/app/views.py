@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse 
-from .forms import PostJobForm, QuoteForm
+from .forms import PostJobForm, QuoteForm, CompleteJobForm
 from .models import Job, STATUS_CHOICES, FIELD_CHOICES, BiddingOffer
 
 # Create your views here.
@@ -89,4 +89,22 @@ def job_accept(request, job_id, biddingOffer_id):
         job.save()
         return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
     else:
-        return HttpResponseRedirect(reverse('home')) 
+        return HttpResponseRedirect(reverse('home'))
+
+def complete_job(request, job_id):
+    job = get_object_or_404(Job, pk = job_id)
+    if request.user == job.translator:
+        if request.method == "POST":
+            form = CompleteJobForm(request.POST)
+            if form.is_valid():
+                job.translated_text = request.POST['translated_text']
+                job.status = STATUS_CHOICES[2][0]
+                job.save()
+                return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
+            else:
+                return render(request, 'app/complete_job.html', {'form':form, 'job':job} )
+        else:
+            form = CompleteJobForm()
+            return render(request, 'app/complete_job.html', {'form':form, 'job':job} )
+    else:
+        return HttpResponseRedirect(reverse('accounts:custom_login'))

@@ -69,13 +69,15 @@ def change_password(request):
 def user_dashboard(request, user_id):
     if request.user.is_authenticated:
        target_user = get_object_or_404(User, pk = user_id)
-       postedJobs = Job.objects.filter(user = target_user)
+       postedJobs = Job.objects.filter(user = target_user).filter(status= STATUS_CHOICES[0][0])
        assignedJobs = Job.objects.filter(translator = target_user).filter(status = STATUS_CHOICES[1][0])
+       completedJobs = Job.objects.filter(translator = target_user).filter(status = STATUS_CHOICES[2][0])
        biddingOffers = BiddingOffer.objects.all()
        context = {
            'target_user' : target_user,
            'postedJobs' : postedJobs,
            'assignedJobs': assignedJobs,
+           'completedJobs': completedJobs,
            'biddingOffers' : biddingOffers
        }
        return render(request, 'registration/user_dashboard.html', context)

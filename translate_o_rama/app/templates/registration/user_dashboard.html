@@ -23,6 +23,7 @@
                 <p>{{ job.target_language }}</p>
                 <p>{{ job.get_field_display }}</p>
                 <p>{{ job.budget }}</p>
+                <p>{{ job.source_text }}</p>
                 {% if job.translator %}
                     <p><a href="{% url 'accounts:user_dashboard' job.translator.id %}">{{job.translator}}</a></p>
                     {% for biddingOffer in biddingOffers %}
@@ -31,30 +32,26 @@
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-                {% if not job.user == user and user.is_translator and job.status == "STATE_NOT_ASSIGNED" %}   
+                {% if not job.user == user and user.is_translator %}   
                     <p><a href="{% url 'app:job_bidding' job.id %}">Bid on Job</a></p>
                 {% endif %}
-                {% if job.status == "STATE_NOT_ASSIGNED" %}
-                    {% for biddingOffer in biddingOffers %}
-                    <div>
+                
+                {% for biddingOffer in biddingOffers %}
+                <div>
 
-                        {% if biddingOffer.job == job %}
-                            <p>Offer: {{biddingOffer.quote}} - <a href="{% url 'accounts:user_dashboard' biddingOffer.translator.id %}">{{biddingOffer.translator}}</a></p>
-                            {% if job.user == user %}
-                                <form method="post" action="{% url 'app:job_accept' job.id biddingOffer.id %}">
-                                    {% csrf_token %}
-                                
-                                    
-                                
-                                    <input type="submit" value="Accept">
-                                
-                                </form>
-                            {% endif %}
+                    {% if biddingOffer.job == job %}
+                        <p>Offer: {{biddingOffer.quote}} - <a href="{% url 'accounts:user_dashboard' biddingOffer.translator.id %}">{{biddingOffer.translator}}</a></p>
+                        {% if job.user == user %}
+                            <form method="post" action="{% url 'app:job_accept' job.id biddingOffer.id %}">
+                                {% csrf_token %}
+                                <input type="submit" value="Accept">  
+                            </form>
                         {% endif %}
-                        
-                    </div>
-                    {% endfor %}
-                {% endif %}
+                    {% endif %}
+                    
+                </div>
+                {% endfor %}
+            
             </div>
             <br><br>
 
@@ -62,28 +59,34 @@
     {% endif %}
 
     {% if user == target_user and assignedJobs %}
-            <h2>Assigned Jobs</h2>
-        
-
+        <h2>Assigned Jobs</h2>
         {% for job in assignedJobs %}
-            {% if job.status == "STATE_IN_PROGRESS" and user.is_translator and job.translator == target_user %}
                 <p>{{ job.title }}</p> <br>
                 <p>{{ job.description }}</p>
                 <p>{{ job.source_launguage }}</p>
                 <p>{{ job.target_language }}</p>
                 <p>{{ job.get_field_display }}</p>
                 <p>{{ job.budget }}</p>
-                <form method="post" action="">
-                    {% csrf_token %}
-                
+                <p>{{ job.source_text }}</p>
+                <a href="{% url 'app:complete_job' job.id %}">Complete job</a>
                     
-                
-                    <input type="submit" value="Complete">
-                
-                </form>
-            {% endif %}
         {% endfor %}
+    {% endif %}
 
+
+    {% if completedJobs %}
+        <h2>Completed Jobs</h2>
+        {% for job in completedJobs %}
+                <p>{{ job.title }}</p> <br>
+                <p>{{ job.description }}</p>
+                <p>{{ job.source_launguage }}</p>
+                <p>{{ job.target_language }}</p>
+                <p>{{ job.get_field_display }}</p>
+                <p>{{ job.budget }}</p>
+                <p>{{ job.source_text }}</p>
+                <p>{{ job.translated_text }}</p>
+                
+        {% endfor %}
     {% endif %}
 
 
