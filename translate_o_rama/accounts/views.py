@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from .forms import SignUpForm, ChangeEmailForm, ChangePasswordForm
 from .models import User
-from app.models import Job, BiddingOffer
+from app.models import Job, BiddingOffer, STATUS_CHOICES
 
 
 # Create your views here.
@@ -69,11 +69,13 @@ def change_password(request):
 def user_dashboard(request, user_id):
     if request.user.is_authenticated:
        target_user = get_object_or_404(User, pk = user_id)
-       jobs = Job.objects.filter(user = target_user)
+       postedJobs = Job.objects.filter(user = target_user)
+       assignedJobs = Job.objects.filter(translator = target_user).filter(status = STATUS_CHOICES[1][0])
        biddingOffers = BiddingOffer.objects.all()
        context = {
            'target_user' : target_user,
-           'jobs' : jobs,
+           'postedJobs' : postedJobs,
+           'assignedJobs': assignedJobs,
            'biddingOffers' : biddingOffers
        }
        return render(request, 'registration/user_dashboard.html', context)
