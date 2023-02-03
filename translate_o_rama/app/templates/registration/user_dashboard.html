@@ -5,7 +5,9 @@
 
 <h2>User info</h2>
 <div>
-    <p><a href="/">Message User</a></p>
+    {% if not target_user == user %}
+        <p><a href="/">Message User</a></p>
+    {% endif %}
     <p>{{ target_user.name }}</p>
     <p>{{ target_user.email }}</p>
     <p>Token balance</p>
