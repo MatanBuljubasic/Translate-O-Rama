@@ -2,7 +2,7 @@ from decimal import Decimal
 from .models import Job, BiddingOffer
 from django.forms import ModelForm, ValidationError
 from django import forms
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class PostJobForm(ModelForm):
     class Meta:
@@ -22,6 +22,9 @@ class QuoteForm(forms.Form):
 
 class CompleteJobForm(forms.Form):
     translated_text = forms.CharField(widget=forms.Textarea(),required=True)
+
+class RateJobForm(forms.Form):
+    rating = forms.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     
 
 

@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse 
-from .forms import PostJobForm, QuoteForm, CompleteJobForm
-from .models import Job, STATUS_CHOICES, FIELD_CHOICES, BiddingOffer
+from .forms import PostJobForm, QuoteForm, CompleteJobForm, RateJobForm
+from .models import Job, STATUS_CHOICES, FIELD_CHOICES, BiddingOffer, Rating
 
 # Create your views here.
 
@@ -106,5 +106,27 @@ def complete_job(request, job_id):
         else:
             form = CompleteJobForm()
             return render(request, 'app/complete_job.html', {'form':form, 'job':job} )
+    else:
+        return HttpResponseRedirect(reverse('accounts:custom_login'))
+    
+def rate_job(request, job_id):
+    job = get_object_or_404(Job, pk = job_id)
+    if request.user == job.user and job.status == STATUS_CHOICES[2][0]:
+        if request.method == "POST":
+            form = RateJobForm(request.POST)
+            if form.is_valid():
+                existingRating = Rating.objects.filter(job = job).first()
+                if existingRating:
+                    existingRating.rating = request.POST["rating"]
+                    existingRating.save()   
+                else:
+                    rating = Rating(job=job, rating = request.POST["rating"])
+                    rating.save()
+                return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))        
+            else:
+                return render(request, 'app/rate_job.html', {'form': form, 'job': job})
+        else:
+            form = RateJobForm()
+            return render(request, 'app/rate_job.html', {'form':form, 'job':job})
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))

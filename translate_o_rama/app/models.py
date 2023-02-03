@@ -1,6 +1,6 @@
 from django.db import models
 from decimal import Decimal
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from accounts.models import User
 
 # Create your models here.
@@ -51,4 +51,11 @@ class BiddingOffer(models.Model):
 
     def __str__(self):
         return f"{self.job} - {self.translator}"
+    
+class Rating(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=3, validators=[MinValueValidator(1), MaxValueValidator(5)])
+
+    def __str__(self):
+        return f"{self.job.title} - {self.rating}"
 
