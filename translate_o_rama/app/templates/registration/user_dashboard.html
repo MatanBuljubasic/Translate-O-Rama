@@ -1,0 +1,56 @@
+{% extends 'app/base.html' %}
+{% block content %}
+ 
+<h1>Korisnički dashboard</h1>
+
+<h2>User info</h2>
+<div>
+    <p><a href="/">Message User</a></p>
+    <p>{{ target_user.name }}</p>
+    <p>{{ target_user.email }}</p>
+    <p>Token balance</p>
+</div>
+
+<h2>Jobs</h2>
+{% for job in jobs %}
+        <div>
+            <p>{{ job.title }}</p> <br>
+            <p>{{ job.description }}</p>
+            <p>{{ job.source_launguage }}</p>
+            <p>{{ job.target_language }}</p>
+            <p>{{ job.get_field_display }}</p>
+            <p>{{ job.budget }}</p>
+            {% if job.translator %}
+                <p><a href="{% url 'accounts:user_dashboard' job.translator.id %}">{{job.translator}}</a></p>
+                {% for biddingOffer in biddingOffers %}
+                    {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
+                        <p>Accepted quote: {{biddingOffer.quote}}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if not job.user == user and user.is_translator and job.status == "STATE_NOT_ASSIGNED" %}   
+                <p><a href="{% url 'app:job_bidding' job.id %}">Bid on Job</a></p>
+            {% endif %}
+            {% if job.status == "STATE_NOT_ASSIGNED" %}
+                {% for biddingOffer in biddingOffers %}
+                <div>
+
+                    {% if biddingOffer.job == job %}
+                        <p>Offer: {{biddingOffer.quote}} - <a href="{% url 'accounts:user_dashboard' biddingOffer.translator.id %}">{{biddingOffer.translator}}</a></p>
+                        {% if job.user == user %}
+                            <p>Accept</p>
+                        {% endif %}
+                    {% endif %}
+                    
+                </div>
+                {% endfor %}
+            {% endif %}
+            
+        </div>
+        <br><br>
+
+    {% endfor %}
+
+
+
+{% endblock %}

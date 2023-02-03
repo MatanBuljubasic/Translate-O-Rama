@@ -1,7 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from .forms import SignUpForm, ChangeEmailForm, ChangePasswordForm
+from .models import User
+from app.models import Job, BiddingOffer
 
 
 # Create your views here.
@@ -61,5 +63,19 @@ def change_password(request):
                 return render(request, 'registration/user_profile.html', {'emailForm': emailForm, 'passwordForm': form})
         else:
             return HttpResponseRedirect(reverse('accounts:user_profile'))
+    else:
+        return HttpResponseRedirect(reverse('accounts:custom_login'))
+    
+def user_dashboard(request, user_id):
+    if request.user.is_authenticated:
+       target_user = get_object_or_404(User, pk = user_id)
+       jobs = Job.objects.filter(user = target_user)
+       biddingOffers = BiddingOffer.objects.all()
+       context = {
+           'target_user' : target_user,
+           'jobs' : jobs,
+           'biddingOffers' : biddingOffers
+       }
+       return render(request, 'registration/user_dashboard.html', context)
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))
