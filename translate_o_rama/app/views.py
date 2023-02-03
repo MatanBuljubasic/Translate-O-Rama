@@ -79,3 +79,14 @@ def job_bidding(request, job_id):
     
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login')) 
+    
+def job_accept(request, job_id, biddingOffer_id):
+    if request.method == "POST":
+        job = get_object_or_404(Job, pk = job_id)
+        biddingOffer = get_object_or_404(BiddingOffer, pk = biddingOffer_id)
+        job.translator = biddingOffer.translator
+        job.status = STATUS_CHOICES[1][0]
+        job.save()
+        return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
+    else:
+        return HttpResponseRedirect(reverse('home')) 

@@ -19,6 +19,7 @@ class PostJobForm(ModelForm):
 
 class QuoteForm(forms.Form):   
     quote = forms.DecimalField(decimal_places=2, max_digits=10, validators=[MinValueValidator(Decimal('0.01'))])
+    
 
 
         

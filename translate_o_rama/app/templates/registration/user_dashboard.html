@@ -40,7 +40,14 @@
                     {% if biddingOffer.job == job %}
                         <p>Offer: {{biddingOffer.quote}} - <a href="{% url 'accounts:user_dashboard' biddingOffer.translator.id %}">{{biddingOffer.translator}}</a></p>
                         {% if job.user == user %}
-                            <p>Accept</p>
+                            <form method="post" action="{% url 'app:job_accept' job.id biddingOffer.id %}">
+                                {% csrf_token %}
+                            
+                                
+                            
+                                <input type="submit" value="Accept">
+                            
+                            </form>
                         {% endif %}
                     {% endif %}
                     
