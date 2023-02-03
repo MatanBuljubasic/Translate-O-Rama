@@ -58,9 +58,23 @@
         {% endfor %}
     {% endif %}
 
-    {% if user == target_user and assignedJobs %}
-        <h2>Assigned Jobs</h2>
-        {% for job in assignedJobs %}
+    {% if user == target_user and assignedJobsUser %}
+        <h2>Jobs assigned by {{ target_user.username }}</h2>
+        {% for job in assignedJobsUser %}
+                <p>{{ job.title }}</p> <br>
+                <p>{{ job.description }}</p>
+                <p>{{ job.source_launguage }}</p>
+                <p>{{ job.target_language }}</p>
+                <p>{{ job.get_field_display }}</p>
+                <p>{{ job.budget }}</p>
+                <p>{{ job.source_text }}</p>
+                    
+        {% endfor %}
+    {% endif %}
+
+    {% if user == target_user and assignedJobsTranslator %}
+        <h2>Jobs assigned to {{ target_user.username }}</h2>
+        {% for job in assignedJobsTranslator %}
                 <p>{{ job.title }}</p> <br>
                 <p>{{ job.description }}</p>
                 <p>{{ job.source_launguage }}</p>
@@ -74,9 +88,24 @@
     {% endif %}
 
 
-    {% if completedJobs %}
-        <h2>Completed Jobs</h2>
-        {% for job in completedJobs %}
+    {% if completedJobsUser %}
+        <h2>Completed Jobs for {{ target_user.username }}</h2>
+        {% for job in completedJobsUser %}
+                <p>{{ job.title }}</p> <br>
+                <p>{{ job.description }}</p>
+                <p>{{ job.source_launguage }}</p>
+                <p>{{ job.target_language }}</p>
+                <p>{{ job.get_field_display }}</p>
+                <p>{{ job.budget }}</p>
+                <p>{{ job.source_text }}</p>
+                <p>{{ job.translated_text }}</p>
+                
+        {% endfor %}
+    {% endif %}
+
+    {% if completedJobsTranslator %}
+        <h2>Completed Jobs by {{ target_user.username }}</h2>
+        {% for job in completedJobsTranslator %}
                 <p>{{ job.title }}</p> <br>
                 <p>{{ job.description }}</p>
                 <p>{{ job.source_launguage }}</p>

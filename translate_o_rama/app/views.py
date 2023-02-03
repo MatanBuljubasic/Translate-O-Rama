@@ -93,7 +93,7 @@ def job_accept(request, job_id, biddingOffer_id):
 
 def complete_job(request, job_id):
     job = get_object_or_404(Job, pk = job_id)
-    if request.user == job.translator:
+    if request.user == job.translator and job.status == STATUS_CHOICES[1][0]:
         if request.method == "POST":
             form = CompleteJobForm(request.POST)
             if form.is_valid():
