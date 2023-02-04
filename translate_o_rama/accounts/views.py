@@ -76,6 +76,7 @@ def user_dashboard(request, user_id):
         completedJobsTranslator = Job.objects.filter(translator = target_user).filter(status = STATUS_CHOICES[2][0])
         biddingOffers = BiddingOffer.objects.all()
         messages = Message.objects.filter(receiver = target_user).order_by('-time')
+        submittedBids = biddingOffers.filter(translator = target_user).filter(job__status = STATUS_CHOICES[0][0])
         
         sum = 0
         counter = 0
@@ -98,7 +99,8 @@ def user_dashboard(request, user_id):
             'completedJobsTranslator' : completedJobsTranslator,
             'biddingOffers' : biddingOffers,
             'rating' : rating,
-            'messages' : messages
+            'messages' : messages,
+            'submittedBids' : submittedBids
         }
         return render(request, 'registration/user_dashboard.html', context)
     else:

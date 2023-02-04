@@ -23,6 +23,16 @@
         <br>
     </div>
 
+    {% if user == target_user and submittedBids %}
+        <h2>Submitted bids</h2>
+        {% for bid in submittedBids %}
+            <div>
+                <p>{{ bid.job.title }}</p>
+                <p>{{ bid.quote }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% if postedJobs %}
         <h2>Posted Jobs</h2>
         {% for job in postedJobs %}
