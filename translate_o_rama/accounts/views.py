@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from .forms import SignUpForm, ChangeEmailForm, ChangePasswordForm, SendMessageForm
 from .models import User, Message
-from app.models import Job, BiddingOffer, STATUS_CHOICES
+from app.models import Job, BiddingOffer, STATUS_CHOICES, Dispute, STATUS_DISPUTE
 
 
 # Create your views here.
@@ -160,6 +160,7 @@ def user_dashboard(request, user_id):
         biddingOffers = BiddingOffer.objects.all()
         messages = Message.objects.filter(receiver = target_user).order_by('-time')
         submittedBids = biddingOffers.filter(translator = target_user).filter(job__status = STATUS_CHOICES[0][0])
+        disputes = Dispute.objects.filter(job__user = target_user, status = STATUS_DISPUTE[1][0])
         
         sum = 0
         counter = 0
@@ -183,7 +184,8 @@ def user_dashboard(request, user_id):
             'biddingOffers' : biddingOffers,
             'rating' : rating,
             'messages' : messages,
-            'submittedBids' : submittedBids
+            'submittedBids' : submittedBids,
+            'disputes': disputes,
         }
         return render(request, 'registration/user_dashboard.html', context)
     else:

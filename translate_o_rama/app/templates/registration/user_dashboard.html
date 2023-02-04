@@ -169,5 +169,18 @@
             {% endfor %}
     {% endif %}
 
+    {% if user == target_user and disputes %}
+        <h2>Closed disputes</h2>
+        {% for dispute in disputes %}
+            <div>
+                <p>On {{ dispute.job.translator }} - {{ dispute.job.title }}</p>
+                <p>{{ dispute.reason }}</p>
+            </div>
+            <br>
+        {% endfor %}
+    {% endif %}
+
+
+
 
 {% endblock %}
