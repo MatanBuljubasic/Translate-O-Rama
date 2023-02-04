@@ -19,8 +19,6 @@ class SignUpForm(UserCreationForm):
 
 
 class ChangeEmailForm(UserChangeForm):
-    email = forms.EmailField()
-
     class Meta:
         model = User
         fields = ('email',)

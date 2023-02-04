@@ -38,7 +38,7 @@ class Job(models.Model):
     source_text = models.TextField()
     translated_text = models.TextField(blank=True)
     status = models.CharField(choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0], max_length=20)
-    translator = models.ForeignKey(User, null=True, blank=True, related_name='translator', on_delete=models.DO_NOTHING, limit_choices_to={'is_translator': True})
+    translator = models.ForeignKey(User, null = True, blank = True, related_name='translator', on_delete=models.DO_NOTHING, limit_choices_to={'is_translator': True})
 
     def __str__(self):
         return f"{self.title}"

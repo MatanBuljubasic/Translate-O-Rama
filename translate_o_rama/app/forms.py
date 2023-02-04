@@ -10,10 +10,11 @@ class PostJobForm(ModelForm):
         exclude = ('user', 'translator', 'translated_text', 'status')
 
     def clean(self):
+        super(PostJobForm, self).clean()   
         source_language = self.cleaned_data['source_language']
         target_language = self.cleaned_data['target_language']
         if source_language == target_language:
-            self.add_error("source_language", "Traženi jezik i zadani jezik su jednaki.")
+            self.add_error("source_language", "Source and target language can't be the same.")
         return self.cleaned_data
     
 

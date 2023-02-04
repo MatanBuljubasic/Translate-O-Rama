@@ -1,14 +1,14 @@
 {% extends 'app/base.html' %}
 {% block content %}
  
-<h1>Objavi posao</h1>
+<h1>Post a job</h1>
 
 <form method="post">
     {% csrf_token %}
 
     {{ form.as_p }}
 
-    <input type="submit">
+    <input type="submit" value="Post a job">
 
 </form>
 

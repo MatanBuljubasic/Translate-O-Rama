@@ -87,6 +87,7 @@ def job_accept(request, job_id, biddingOffer_id):
         job.translator = biddingOffer.translator
         job.status = STATUS_CHOICES[1][0]
         job.save()
+        BiddingOffer.objects.filter(job=job).exclude(id=biddingOffer_id).delete()
         return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
     else:
         return HttpResponseRedirect(reverse('home'))
