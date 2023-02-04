@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from .forms import SignUpForm, ChangeEmailForm, ChangePasswordForm
 from .models import User
-from app.models import Job, BiddingOffer, STATUS_CHOICES
+from app.models import Job, BiddingOffer, STATUS_CHOICES, Rating
 
 
 # Create your views here.
@@ -68,22 +68,38 @@ def change_password(request):
     
 def user_dashboard(request, user_id):
     if request.user.is_authenticated:
-       target_user = get_object_or_404(User, pk = user_id)
-       postedJobs = Job.objects.filter(user = target_user).filter(status= STATUS_CHOICES[0][0])
-       assignedJobsUser = Job.objects.filter(user = target_user).filter(status = STATUS_CHOICES[1][0])
-       assignedJobsTranslator = Job.objects.filter(translator = target_user).filter(status = STATUS_CHOICES[1][0])
-       completedJobsUser = Job.objects.filter(user = target_user).filter(status = STATUS_CHOICES[2][0])
-       completedJobsTranslator = Job.objects.filter(translator = target_user).filter(status = STATUS_CHOICES[2][0])
-       biddingOffers = BiddingOffer.objects.all()
-       context = {
-           'target_user' : target_user,
-           'postedJobs' : postedJobs,
-           'assignedJobsUser': assignedJobsUser,
-           'assignedJobsTranslator': assignedJobsTranslator,
-           'completedJobsUser': completedJobsUser,
-           'completedJobsTranslator' : completedJobsTranslator,
-           'biddingOffers' : biddingOffers
-       }
-       return render(request, 'registration/user_dashboard.html', context)
+        target_user = get_object_or_404(User, pk = user_id)
+        postedJobs = Job.objects.filter(user = target_user).filter(status= STATUS_CHOICES[0][0])
+        assignedJobsUser = Job.objects.filter(user = target_user).filter(status = STATUS_CHOICES[1][0])
+        assignedJobsTranslator = Job.objects.filter(translator = target_user).filter(status = STATUS_CHOICES[1][0])
+        completedJobsUser = Job.objects.filter(user = target_user).filter(status = STATUS_CHOICES[2][0])
+        completedJobsTranslator = Job.objects.filter(translator = target_user).filter(status = STATUS_CHOICES[2][0])
+        biddingOffers = BiddingOffer.objects.all()
+        
+        sum = 0
+        counter = 0
+        for completedJob in completedJobsTranslator:
+            if (completedJob.rating_set.first()):
+                sum += completedJob.rating_set.first().rating
+                counter += 1
+            
+
+        if counter != 0:
+            rating = sum/counter
+        else:
+            rating = None
+
+        allRatings = Rating.objects.filter()
+        context = {
+            'target_user' : target_user,
+            'postedJobs' : postedJobs,
+            'assignedJobsUser': assignedJobsUser,
+            'assignedJobsTranslator': assignedJobsTranslator,
+            'completedJobsUser': completedJobsUser,
+            'completedJobsTranslator' : completedJobsTranslator,
+            'biddingOffers' : biddingOffers,
+            'rating' : rating,
+        }
+        return render(request, 'registration/user_dashboard.html', context)
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))

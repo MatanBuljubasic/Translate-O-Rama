@@ -11,6 +11,13 @@
         {% if not target_user == user %}
             <p><a href="/">Message User</a></p>
         {% endif %}
+        {% if target_user.is_translator %}
+            {% if rating %}
+                <p>{{ rating }}</p>
+            {% else %}
+                <p>(unrated)</p>
+            {% endif %}
+        {% endif %}
         <br>
     </div>
 
