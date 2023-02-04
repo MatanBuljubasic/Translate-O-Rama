@@ -144,5 +144,16 @@
         {% endfor %}
     {% endif %}
 
+    {% if user == target_user %}
+            <h2>Received messages</h2>
+            {% for message in messages %}
+                <div>
+                    <p>{{ message.sender }} - {{ message.time }}</p>
+                    <p>{{ message.text }}</p>
+                </div>
+                <br>
+            {% endfor %}
+    {% endif %}
+
 
 {% endblock %}
