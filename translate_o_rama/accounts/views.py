@@ -81,15 +81,13 @@ def user_dashboard(request, user_id):
         for completedJob in completedJobsTranslator:
             if (completedJob.rating_set.first()):
                 sum += completedJob.rating_set.first().rating
-                counter += 1
-            
+                counter += 1   
 
         if counter != 0:
             rating = sum/counter
         else:
             rating = None
 
-        allRatings = Rating.objects.filter()
         context = {
             'target_user' : target_user,
             'postedJobs' : postedJobs,

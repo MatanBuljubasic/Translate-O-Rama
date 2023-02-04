@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse 
 from .forms import PostJobForm, QuoteForm, CompleteJobForm, RateJobForm
-from .models import Job, STATUS_CHOICES, FIELD_CHOICES, BiddingOffer, Rating
+from .models import Job, STATUS_CHOICES, FIELD_CHOICES, BiddingOffer, Rating 
+from accounts.models import User
 
 # Create your views here.
 
@@ -84,11 +85,33 @@ def job_accept(request, job_id, biddingOffer_id):
     if request.method == "POST":
         job = get_object_or_404(Job, pk = job_id)
         biddingOffer = get_object_or_404(BiddingOffer, pk = biddingOffer_id)
-        job.translator = biddingOffer.translator
-        job.status = STATUS_CHOICES[1][0]
-        job.save()
-        BiddingOffer.objects.filter(job=job).exclude(id=biddingOffer_id).delete()
-        return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
+        if (request.user.tokens >= biddingOffer.quote):
+            job.translator = biddingOffer.translator
+            job.status = STATUS_CHOICES[1][0]
+
+            user = get_object_or_404(User, pk = request.user.id)
+            user.tokens -= biddingOffer.quote
+            user.save()
+
+            translator = get_object_or_404(User, pk = job.translator.id)
+            translator.tokens += biddingOffer.quote  
+            translator.save()
+            
+            job.save()
+            BiddingOffer.objects.filter(job=job).exclude(id=biddingOffer_id).delete()
+            return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
+        else:
+            if request.user.is_authenticated:
+                jobs = Job.objects.filter(status=STATUS_CHOICES[0][0])
+                error_message = "Insufficient tokens"
+                context = {
+                    'jobs' : jobs,
+                    'error_message' : error_message,
+                }
+                return render(request, 'app/job_listing.html', context)
+            else:
+                return HttpResponseRedirect(reverse('accounts:custom_login'))
+
     else:
         return HttpResponseRedirect(reverse('home'))
 
