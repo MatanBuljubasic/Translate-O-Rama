@@ -52,7 +52,7 @@ def job_bidding(request, job_id):
                 else:
                     biddingOffer = BiddingOffer(job=job, translator = request.user, quote = quote)
                     biddingOffer.save()
-                message = Message(sender = request.user, receiver = job.user, text = f"{request.user.username} bid {quote} on your job")
+                message = Message(sender = request.user, receiver = job.user, text = f"{request.user.username} bid {quote} on your '{job.title}' job.")
                 message.save()
                 return HttpResponseRedirect(reverse('app:job_listing'))        
             else:
@@ -101,6 +101,8 @@ def job_accept(request, job_id, biddingOffer_id):
             translator.save()
             
             job.save()
+            message = Message(sender = request.user, receiver = job.translator, text = f"{request.user.username} accepted your bid of {biddingOffer.quote} for '{job.title}'.")
+            message.save()
             BiddingOffer.objects.filter(job=job).exclude(id=biddingOffer_id).delete()
             return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
         else:
@@ -127,6 +129,8 @@ def complete_job(request, job_id):
                 job.translated_text = request.POST['translated_text']
                 job.status = STATUS_CHOICES[2][0]
                 job.save()
+                message = Message(sender = request.user, receiver = job.user, text = f"{request.user.username} completed your job '{job.title}'.")
+                message.save()
                 return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
             else:
                 return render(request, 'app/complete_job.html', {'form':form, 'job':job} )
