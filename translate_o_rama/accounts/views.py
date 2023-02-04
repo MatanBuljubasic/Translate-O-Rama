@@ -36,6 +36,7 @@ def user_profile(request):
         assignedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[1][0])
         completedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[2][0])
         completedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[2][0])
+        biddingOffers = BiddingOffer.objects.all()
         submittedBids = BiddingOffer.objects.filter(translator = request.user).filter(job__status = STATUS_CHOICES[0][0])
         sum = 0
         counter = 0
@@ -57,7 +58,8 @@ def user_profile(request):
             'completedJobsUser': completedJobsUser,
             'completedJobsTranslator' : completedJobsTranslator,
             'rating' : rating,
-            'submittedBids' : submittedBids
+            'submittedBids' : submittedBids,
+            'biddingOffers' : biddingOffers,
             }
         return render(request, 'registration/user_profile.html', context)
     else:

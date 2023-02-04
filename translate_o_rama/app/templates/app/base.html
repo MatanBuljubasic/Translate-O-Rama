@@ -1,7 +1,7 @@
 {% load static %}
 <html>
   <head>
-    <title>My Lame Imgur</title>
+    <title>Translate-O-Rama</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf" crossorigin="anonymous"></script>
@@ -11,7 +11,7 @@
   <body>    
     <div class="page-header">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">My Lame Imgur</a>
+        <a class="navbar-brand" href="/">Translate-O-Rama</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -27,22 +27,24 @@
             <li class="nav-item active">
               <a class="nav-link" href="{% url 'app:post' %}">Post a Job</a>
             </li>
+          </ul>
+
           <ul class="navbar-nav ml-auto">
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated %}              
               <li class="nav-item active">
-                <a class="nav-link" href="{% url 'logout' %}"> Log Out</a>
+                <a class="nav-link" href="{% url 'accounts:user_dashboard' user.id %}"> {{user.username}}'s Dashboard</a>
               </li>
               <li class="nav-item active">
                 <a class="nav-link" href="{% url 'accounts:user_profile' %}"> {{user.username}}'s Profile</a>
-              </li>
-              <li class="nav-item active">
-                <a class="nav-link" href="{% url 'accounts:user_dashboard' user.id %}"> {{user.username}}'s Dashboard</a>
               </li>
               {% if user.is_superuser %}
                 <li class="nav-item active">
                   <a class="nav-link" href="/admin"> Admin</a>
                 </li>
               {% endif %}
+              <li class="nav-item active">
+                <a class="nav-link" href="{% url 'logout' %}"> Log Out</a>
+              </li>
             {% else %}
               <li class="nav-item active">
                 <a class="nav-link" href="{% url 'accounts:custom_login' %}">Log In</a>
@@ -54,15 +56,15 @@
           </ul>
         </div>
       </nav>
-
     </div>
+    
     <div class="content container">
       <div class="row">
         <div class="col-md-12">
           <div class="jumbotron fluid-jumbotron">
             <div class="container">
-              <h1 class="display-4">My Lame Imgur</h1>
-              <p class="lead">Your one stop place for posting your lamest images!</p>
+              <h1 class="display-4">Translate-O-Rama</h1>
+              <p class="lead">Your one stop place for all your translations!</p>
             </div>
           </div>
         </div>

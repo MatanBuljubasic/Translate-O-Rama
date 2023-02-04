@@ -52,7 +52,7 @@ def job_bidding(request, job_id):
                 else:
                     biddingOffer = BiddingOffer(job=job, translator = request.user, quote = quote)
                     biddingOffer.save()
-                message = Message(sender = request.user, receiver = job.user, text = f"{request.user.username} bid {quote} on your '{job.title}' job.")
+                message = Message(sender = request.user, receiver = job.user, text = f"{request.user.username} bid {quote} on your job '{job.title}'.")
                 message.save()
                 return HttpResponseRedirect(reverse('app:job_listing'))        
             else:
@@ -101,14 +101,14 @@ def job_accept(request, job_id, biddingOffer_id):
             translator.save()
             
             job.save()
-            message = Message(sender = request.user, receiver = job.translator, text = f"{request.user.username} accepted your bid of {biddingOffer.quote} for '{job.title}'.")
+            message = Message(sender = request.user, receiver = job.translator, text = f"{request.user.username} accepted your bid of {biddingOffer.quote} for job '{job.title}'.")
             message.save()
             BiddingOffer.objects.filter(job=job).exclude(id=biddingOffer_id).delete()
             return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':request.user.id}))
         else:
             if request.user.is_authenticated:
                 jobs = Job.objects.filter(status=STATUS_CHOICES[0][0])
-                error_message = "Insufficient tokens"
+                error_message = "Insufficient tokens."
                 context = {
                     'jobs' : jobs,
                     'error_message' : error_message,

@@ -1,17 +1,20 @@
 {% extends 'app/base.html' %}
 {% block content %}
 
-    <h1>Bid for a job</h1>
+    <h1>Bid on a job</h1>
     <div>
         <div>
-            <p>{{ job.title }}</p> <br>
-            <p>{{ job.description }}</p>
-            <p>{{ job.source_launguage }}</p>
-            <p>{{ job.target_language }}</p>
-            <p>{{ job.get_field_display }}</p>
-            <p>{{ job.budget }}</p>
-            <p><a href="">{{ job.user.username }}</a></p>
-            <p><a href="/">Message User</a></p>
+            <p>Title: {{ job.title }}</p>
+            <p>Description: {{ job.description }}</p>
+            <p>Source language: {{ job.source_language }}</p>
+            <p>Target language: {{ job.target_language }}</p>
+            <p>Job field: {{ job.get_field_display }}</p>
+            <p>Budget: {{ job.budget }}</p>
+            <p>Source text: {{ job.source_text }}</p>
+            <p>By: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user }}</a></p>
+            {% if not job.user == user %}
+                <p><a href="{% url 'accounts:send_message' user.id job.user.id %}">Message User</a></p>
+            {% endif %}
         </div>
 
         <div>
