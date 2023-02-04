@@ -1,8 +1,9 @@
 from django import forms
-from accounts.models import User
+from accounts.models import User, Message
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm, UserChangeForm
 from django.forms import ModelForm, ValidationError
 from django.contrib.auth.password_validation import validate_password
+
 
 
 
@@ -32,6 +33,11 @@ class ChangePasswordForm(SetPasswordForm):
     class Meta:
         model = User
         fields = ('new_password1', 'new_password2')
+
+class SendMessageForm(ModelForm):
+    class Meta:
+        model = Message
+        fields = ('text',)
 
 
     

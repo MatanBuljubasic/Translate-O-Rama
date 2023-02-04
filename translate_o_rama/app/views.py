@@ -66,11 +66,11 @@ def job_bidding(request, job_id):
     elif request.user.is_authenticated:
         if request.user.is_translator:
             if job.status != STATUS_CHOICES[0][0]:
-                error_message = "Ovaj posao je u tijeku ili završen."
+                error_message = "This job is in progress or finished."
             else:
-                error_message = "Ne možeš dati ponudu za vlastiti posao."
+                error_message = "You cannot bid on your own job."
         else:
-            error_message = "Niste prevoditelj."
+            error_message = "You are not a translator."
         jobs = Job.objects.filter(status=STATUS_CHOICES[0][0])
         context = {
             'jobs' : jobs,

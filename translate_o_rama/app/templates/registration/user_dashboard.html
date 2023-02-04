@@ -11,7 +11,7 @@
             <p>Tokens: {{ user.tokens }}</p>
         {% endif %}
         {% if not target_user == user %}
-            <p><a href="/">Message User</a></p>
+            <p><a href="{% url 'accounts:send_message' user.id target_user.id %}">Message User</a></p>
         {% endif %}
         {% if target_user.is_translator %}
             {% if rating %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from .forms import SignUpForm, ChangeEmailForm, ChangePasswordForm
+from .forms import SignUpForm, ChangeEmailForm, ChangePasswordForm, SendMessageForm
 from .models import User
 from app.models import Job, BiddingOffer, STATUS_CHOICES, Rating
 
@@ -99,5 +99,36 @@ def user_dashboard(request, user_id):
             'rating' : rating,
         }
         return render(request, 'registration/user_dashboard.html', context)
+    else:
+        return HttpResponseRedirect(reverse('accounts:custom_login'))
+    
+def send_message(request, user_id, target_user_id):
+    messageSender = get_object_or_404(User, pk = user_id)
+    messageReceiver = get_object_or_404(User, pk = target_user_id)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = SendMessageForm(request.POST)
+            if form.is_valid():
+                message = form.save(commit=False)
+                message.sender = messageSender
+                message.receiver = messageReceiver
+                message.save()
+                return HttpResponseRedirect(reverse('accounts:user_dashboard', kwargs={'user_id':target_user_id}))
+            else:
+                context = {
+                    'form' : form,
+                    'messageReceiver' : messageReceiver
+                }
+                return render(request, 'registration/send_message.html', context)
+        else:
+            if messageReceiver != messageSender:
+                form = SendMessageForm()
+                context = {
+                    'form' : form,
+                    'messageReceiver' : messageReceiver
+                }
+                return render(request, 'registration/send_message.html', context)
+            else:
+                return HttpResponseRedirect(reverse('home'))
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))

@@ -9,4 +9,5 @@ urlpatterns = [
     path('change_email/', views.change_email, name="change_email"),
     path('change_password/', views.change_password, name="change_password"),
     path('user_dashboard/<int:user_id>', views.user_dashboard, name="user_dashboard"),
+    path('send_message/<int:user_id>/<int:target_user_id>', views.send_message, name="send_message")
 ]
