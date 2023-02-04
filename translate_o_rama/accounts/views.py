@@ -36,7 +36,7 @@ def user_profile(request):
         assignedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[1][0])
         completedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[2][0])
         completedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[2][0])
-
+        submittedBids = BiddingOffer.objects.filter(translator = request.user).filter(job__status = STATUS_CHOICES[0][0])
         sum = 0
         counter = 0
         for completedJob in completedJobsTranslator:
@@ -57,6 +57,7 @@ def user_profile(request):
             'completedJobsUser': completedJobsUser,
             'completedJobsTranslator' : completedJobsTranslator,
             'rating' : rating,
+            'submittedBids' : submittedBids
             }
         return render(request, 'registration/user_profile.html', context)
     else:
@@ -77,7 +78,7 @@ def change_email(request):
                 assignedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[1][0])
                 completedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[2][0])
                 completedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[2][0])
-
+                submittedBids = BiddingOffer.objects.filter(translator = request.user).filter(job__status = STATUS_CHOICES[0][0])
                 sum = 0
                 counter = 0
                 for completedJob in completedJobsTranslator:
@@ -98,6 +99,7 @@ def change_email(request):
                     'completedJobsUser': completedJobsUser,
                     'completedJobsTranslator' : completedJobsTranslator,
                     'rating' : rating,
+                    'submittedBids' : submittedBids
                     }
                 return render(request, 'registration/user_profile.html', context)
         else:
@@ -118,7 +120,7 @@ def change_password(request):
                 assignedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[1][0])
                 completedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[2][0])
                 completedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[2][0])
-
+                submittedBids = BiddingOffer.objects.filter(translator = request.user).filter(job__status = STATUS_CHOICES[0][0])
                 sum = 0
                 counter = 0
                 for completedJob in completedJobsTranslator:
@@ -139,6 +141,7 @@ def change_password(request):
                     'completedJobsUser': completedJobsUser,
                     'completedJobsTranslator' : completedJobsTranslator,
                     'rating' : rating,
+                    'submittedBids' : submittedBids
                     }
                 return render(request, 'registration/user_profile.html', context)
         else:

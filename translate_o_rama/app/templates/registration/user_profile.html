@@ -72,7 +72,7 @@
                 {% endif %}
             {% endfor %} 
             {% if user == job.user %}
-                <a href="{% url 'app:rate_job' job.id %}">Rate job</a>
+                <p><a href="{% url 'app:rate_job' job.id %}">Rate job</a></p>
             {% endif %}
             <br>
     {% endfor %}
@@ -85,6 +85,7 @@
             <p>{{ bid.job.title }}</p>
             <p>{{ bid.quote }}</p>
         </div>
+        <br>
     {% endfor %}
 {% endif %}
 
@@ -103,8 +104,8 @@
                     <p>Accepted quote: {{biddingOffer.quote}}</p>
                 {% endif %}
             {% endfor %} 
-            <a href="{% url 'app:complete_job' job.id %}">Complete job</a>
-            <br>    
+            <p><a href="{% url 'app:complete_job' job.id %}">Complete job</a></p>
+            <br>  
     {% endfor %}
 {% endif %}
 
@@ -125,7 +126,7 @@
                 {% endif %}
             {% endfor %} 
             {% if user == job.user %}
-                <a href="{% url 'app:rate_job' job.id %}">Rate job</a>
+                <p><a href="{% url 'app:rate_job' job.id %}">Rate job</a></p>
             {% endif %}
             <br>
     {% endfor %}

@@ -19,7 +19,9 @@
             {% if not job.user == user and user.is_translator %}   
                 <p><a href="{% url 'app:job_bidding' job.id %}">Bid on Job</a></p>
             {% endif %}
-            <p><a href="/">Message User</a></p>
+            {% if not job.user == user %}
+                <p><a href="{% url 'accounts:send_message' user.id job.user.id %}">Message User</a></p>
+            {% endif %}
         </div>
         <br><br>
 
