@@ -32,20 +32,74 @@ def user_profile(request):
     if request.user.is_authenticated:
         emailForm = ChangeEmailForm(instance=request.user)
         passwordForm = ChangePasswordForm(request.user)
-        return render(request, 'registration/user_profile.html', {'emailForm': emailForm, 'passwordForm': passwordForm})
+        assignedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[1][0])
+        assignedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[1][0])
+        completedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[2][0])
+        completedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[2][0])
+
+        sum = 0
+        counter = 0
+        for completedJob in completedJobsTranslator:
+            if (completedJob.rating_set.first()):
+                sum += completedJob.rating_set.first().rating
+                counter += 1   
+
+        if counter != 0:
+            rating = sum/counter
+        else:
+            rating = None
+        
+        context = {
+            'emailForm': emailForm,
+            'passwordForm': passwordForm,
+            'assignedJobsUser': assignedJobsUser,
+            'assignedJobsTranslator': assignedJobsTranslator,
+            'completedJobsUser': completedJobsUser,
+            'completedJobsTranslator' : completedJobsTranslator,
+            'rating' : rating,
+            }
+        return render(request, 'registration/user_profile.html', context)
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))
 
 def change_email(request):
     if request.user.is_authenticated:
         if request.method == "POST":
+            currentEmail = request.user.email
             form = ChangeEmailForm(request.POST, instance=request.user)
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect(reverse('accounts:user_profile'))
             else:
+                request.user.email = currentEmail
                 passwordForm = ChangePasswordForm(request.user)
-                return render(request, 'registration/user_profile.html', {'emailForm': form, 'passwordForm': passwordForm})
+                assignedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[1][0])
+                assignedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[1][0])
+                completedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[2][0])
+                completedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[2][0])
+
+                sum = 0
+                counter = 0
+                for completedJob in completedJobsTranslator:
+                    if (completedJob.rating_set.first()):
+                        sum += completedJob.rating_set.first().rating
+                        counter += 1   
+
+                if counter != 0:
+                    rating = sum/counter
+                else:
+                    rating = None
+                
+                context = {
+                    'emailForm': form,
+                    'passwordForm': passwordForm,
+                    'assignedJobsUser': assignedJobsUser,
+                    'assignedJobsTranslator': assignedJobsTranslator,
+                    'completedJobsUser': completedJobsUser,
+                    'completedJobsTranslator' : completedJobsTranslator,
+                    'rating' : rating,
+                    }
+                return render(request, 'registration/user_profile.html', context)
         else:
             return HttpResponseRedirect(reverse('accounts:user_profile'))
     else:
@@ -60,7 +114,33 @@ def change_password(request):
                 return HttpResponseRedirect(reverse('accounts:user_profile'))
             else:
                 emailForm = ChangeEmailForm(instance=request.user)
-                return render(request, 'registration/user_profile.html', {'emailForm': emailForm, 'passwordForm': form})
+                assignedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[1][0])
+                assignedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[1][0])
+                completedJobsUser = Job.objects.filter(user = request.user).filter(status = STATUS_CHOICES[2][0])
+                completedJobsTranslator = Job.objects.filter(translator = request.user).filter(status = STATUS_CHOICES[2][0])
+
+                sum = 0
+                counter = 0
+                for completedJob in completedJobsTranslator:
+                    if (completedJob.rating_set.first()):
+                        sum += completedJob.rating_set.first().rating
+                        counter += 1   
+
+                if counter != 0:
+                    rating = sum/counter
+                else:
+                    rating = None
+                
+                context = {
+                    'emailForm': emailForm,
+                    'passwordForm': form,
+                    'assignedJobsUser': assignedJobsUser,
+                    'assignedJobsTranslator': assignedJobsTranslator,
+                    'completedJobsUser': completedJobsUser,
+                    'completedJobsTranslator' : completedJobsTranslator,
+                    'rating' : rating,
+                    }
+                return render(request, 'registration/user_profile.html', context)
         else:
             return HttpResponseRedirect(reverse('accounts:user_profile'))
     else:
