@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse 
 from .forms import PostJobForm, QuoteForm, CompleteJobForm, RateJobForm, DisputeForm
-from .models import Job, STATUS_CHOICES, FIELD_CHOICES, BiddingOffer, Rating 
-from accounts.models import User
+from .models import Job, STATUS_CHOICES, FIELD_CHOICES, BiddingOffer, Rating
+from accounts.models import User, Message
 
 # Create your views here.
 
@@ -45,12 +45,15 @@ def job_bidding(request, job_id):
             form = QuoteForm(request.POST)
             if form.is_valid():
                 existingOffer = BiddingOffer.objects.filter(job = job, translator = request.user).first()
+                quote = request.POST["quote"]
                 if existingOffer:
-                    existingOffer.quote = request.POST["quote"]
+                    existingOffer.quote = quote
                     existingOffer.save()   
                 else:
-                    biddingOffer = BiddingOffer(job=job, translator = request.user, quote = request.POST["quote"])
+                    biddingOffer = BiddingOffer(job=job, translator = request.user, quote = quote)
                     biddingOffer.save()
+                message = Message(sender = request.user, receiver = job.user, text = f"{request.user.username} bid {quote} on your job")
+                message.save()
                 return HttpResponseRedirect(reverse('app:job_listing'))        
             else:
                 return render(request, 'app/job_bidding.html', {'form': form, 'job': job})
