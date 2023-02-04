@@ -1,5 +1,5 @@
 from decimal import Decimal
-from .models import Job, BiddingOffer
+from .models import Job, BiddingOffer, Dispute
 from django.forms import ModelForm, ValidationError
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -27,6 +27,11 @@ class CompleteJobForm(forms.Form):
 class RateJobForm(forms.Form):
     rating = forms.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     
+class DisputeForm(ModelForm):
+    class Meta:
+        model = Dispute
+        fields = ('reason',)
+
 
 
         

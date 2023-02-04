@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Job, BiddingOffer, Rating
+from .models import Job, BiddingOffer, Rating, Dispute
 
 # Register your models here.
 
@@ -15,7 +15,12 @@ class RatingAdmin(admin.ModelAdmin):
     list_display = ('job', 'rating')
     exclude = ()
 
+class DisputeAdmin(admin.ModelAdmin):
+    list_display = ('job', 'status')
+    exclude = ()
+
 admin.site.register(Job, JobAdmin)
 admin.site.register(BiddingOffer, BiddingOfferAdmin)
 admin.site.register(Rating, RatingAdmin)
+admin.site.register(Dispute, DisputeAdmin)
 

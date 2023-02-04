@@ -27,6 +27,11 @@ STATUS_CHOICES = (
     ("STATE_COMPLETED", "Completed"),
 )
 
+STATUS_DISPUTE = (
+    ("STATE_OPEN", "Open"),
+    ("STATE_CLOSED", "Closed"),
+)
+
 class Job(models.Model):
     user = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
     title = models.CharField(unique=True, max_length=120)
@@ -59,5 +64,10 @@ class Rating(models.Model):
     def __str__(self):
         return f"{self.job.title} - {self.rating}"
     
+class Dispute(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    status = models.CharField(choices=STATUS_DISPUTE, default=STATUS_DISPUTE[0][0], max_length=20)
+    reason = models.TextField()
 
-
+    def __str__(self):
+        return f"{self.job.title} - By: {self.job.user} - On: {self.job.translator}"

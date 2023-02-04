@@ -1,0 +1,21 @@
+{% extends 'app/base.html' %}
+{% block content %}
+ 
+<h1>Dispute a job</h1>
+<h2>{{ job.title }}</h2>
+<p>{{ job.source_language }}</p>
+<p>{{ job.source_text }}</p>
+<p>{{ job.target_language }}</p>
+<p>{{ job.translated_text }}</p>
+<p>{{ job.description }}</p>
+
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <input type="submit" value="Dispute">
+</form>
+
+{% endblock %}

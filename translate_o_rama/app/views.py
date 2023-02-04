@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse 
-from .forms import PostJobForm, QuoteForm, CompleteJobForm, RateJobForm
+from .forms import PostJobForm, QuoteForm, CompleteJobForm, RateJobForm, DisputeForm
 from .models import Job, STATUS_CHOICES, FIELD_CHOICES, BiddingOffer, Rating 
 from accounts.models import User
 
@@ -154,3 +154,22 @@ def rate_job(request, job_id):
             return render(request, 'app/rate_job.html', {'form':form, 'job':job})
     else:
         return HttpResponseRedirect(reverse('accounts:custom_login'))
+    
+def dispute_job(request, job_id):
+    job = get_object_or_404(Job, pk = job_id)
+    if request.user == job.user and job.status == STATUS_CHOICES[2][0]:
+        if request.method == "POST":
+            form = DisputeForm(request.POST)
+            if form.is_valid():
+                dispute = form.save(commit=False)
+                dispute.job = job
+                dispute.save()
+                return HttpResponseRedirect(reverse('accounts:user_profile'))
+            else:
+                return render(request, 'app/dispute_job.html', {'form':form, 'job': job})
+        else:
+            form = DisputeForm()
+            return render(request, 'app/dispute_job.html', {'form':form, 'job': job})
+    else:
+        return HttpResponseRedirect(reverse('accounts:custom_login'))
+    

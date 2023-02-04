@@ -73,6 +73,7 @@
             {% endfor %} 
             {% if user == job.user %}
                 <p><a href="{% url 'app:rate_job' job.id %}">Rate job</a></p>
+                <p><a href="{% url 'app:dispute_job' job.id %}">Dispute job</a></p>
             {% endif %}
             <br>
     {% endfor %}
@@ -99,6 +100,7 @@
             <p>{{ job.get_field_display }}</p>
             <p>{{ job.budget }}</p>
             <p>{{ job.source_text }}</p>
+            <p><a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user.username }}</a></p>
             {% for biddingOffer in biddingOffers %}
                 {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
                     <p>Accepted quote: {{biddingOffer.quote}}</p>
@@ -120,6 +122,7 @@
             <p>{{ job.budget }}</p>
             <p>{{ job.source_text }}</p>
             <p>{{ job.translated_text }}</p>
+            <p><a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user.username }}</a></p>
             {% for biddingOffer in biddingOffers %}
                 {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
                     <p>Accepted quote: {{biddingOffer.quote}}</p>
@@ -127,6 +130,7 @@
             {% endfor %} 
             {% if user == job.user %}
                 <p><a href="{% url 'app:rate_job' job.id %}">Rate job</a></p>
+                <p><a href="{% url 'app:dispute_job' job.id %}">Dispute job</a></p>
             {% endif %}
             <br>
     {% endfor %}
