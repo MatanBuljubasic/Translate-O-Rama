@@ -98,7 +98,7 @@
         <p>Job field: {{ job.get_field_display }}</p>
         <p>Budget: {{ job.budget }}</p>
         <p>Source text: {{ job.source_text }}</p>
-        <p>For: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user.username }}</a></p>
+        <p>For: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user }}</a></p>
             {% for biddingOffer in biddingOffers %}
                 {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
                     <p>Accepted quote: {{biddingOffer.quote}}</p>
@@ -120,7 +120,7 @@
         <p>Budget: {{ job.budget }}</p>
         <p>Source text: {{ job.source_text }}</p>
         <p>Translated text: {{ job.translated_text }}</p>
-        <p>For: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user.username }}</a></p>
+        <p>For: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user }}</a></p>
             {% for biddingOffer in biddingOffers %}
                 {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
                     <p>Accepted quote: {{biddingOffer.quote}}</p>
