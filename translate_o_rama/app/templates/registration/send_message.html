@@ -1,14 +1,36 @@
 {% extends 'app/base.html' %}
 {% block content %}
+{% load widget_tweaks %}
  
-<h1>Send message to {{ messageReceiver.email }}</h1>
+<h1 class="display-4">Send message to {{ messageReceiver.email }}</h1>
 
 <form method="post">
     {% csrf_token %}
 
-    {{ form.as_p }}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
 
-    <input type="submit" value="Send">
+    {% for field in form.visible_fields %}
+      <div class="form-group">
+        {{ field|add_class:'form-control' }}
+        {% for error in field.errors %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-ok"></span> Send
+      </button>
+    </div>
 </form>
 
 {% endblock %}

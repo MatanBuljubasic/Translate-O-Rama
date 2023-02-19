@@ -1,15 +1,44 @@
 {% extends 'app/base.html' %}
 {% block content %}
+{% load widget_tweaks %}
  
-<h1>Register</h1>
+<h1 class="display-4">Register</h1>
 
 <form method="post">
     {% csrf_token %}
 
-    {{ form.as_p }}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
 
-    <input type="submit" value="Create new account">
+    {% for field in form.visible_fields %}
+        {% if field == form.is_translator %}
+            <div class="form-group ">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field|add_class:'form-check-inline' }}
+            </div>    
+        {% else %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field|add_class:'form-control' }}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
 
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-ok"></span> Create new Account
+      </button>
+    </div>
 </form>
 
 {% endblock %}
