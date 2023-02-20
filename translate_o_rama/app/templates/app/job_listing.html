@@ -1,28 +1,78 @@
 {% extends 'app/base.html' %}
 {% block content %}
 
-    <h1>All jobs</h1>
-    {% if error_message %}
-        {{ error_message }}
-    {% endif %}
+{% if error_message %}
+    <div class="alert-danger p-3 mb-3">{{ error_message }}</div>
+{% endif %}
 
-    {% for job in jobs %}
-        <div>
-            <p>Title: {{ job.title }}</p>
-            <p>Description: {{ job.description }}</p>
-            <p>Source language: {{ job.source_language }}</p>
-            <p>Target language: {{ job.target_language }}</p>
-            <p>Job field: {{ job.get_field_display }}</p>
-            <p>Budget: {{ job.budget }}</p>
-            <p>Source text: {{ job.source_text }}</p>
-            <p>By: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user }}</a></p>
-            {% if not job.user == user and user.is_translator %}   
-                <p><a href="{% url 'app:job_bidding' job.id %}">Bid on Job</a></p>
-            {% endif %}
-            {% if not job.user == user %}
-                <p><a href="{% url 'accounts:send_message' user.id job.user.id %}">Message User</a></p>
-            {% endif %}
+<div class="card mb-3 border-primary p-3">
+    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2 mb-4">All jobs</h2>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="list-group d-flex flex-wrap justify-content-around">
+                    {% for job in jobs %}
+                    <div>
+
+                        <div class="container card bg-white text-primary rounded pt-2 pb-2 mx-2 border-primary" >
+                            <div class="row text-center">
+                                <h1 class="col-12">Title: {{ job.title }}</h5>
+                            </div>
+
+                            <div class="row text-center">
+                                <h2 class="col-12">By: <strong><a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user.username }}</a></strong></h2>
+                            </div>
+
+                            <div class="row">
+                                <h4 class="col-12">Description: {{ job.description }}</h4>
+                            </div>
+
+                            <div class="container card border-primary rounded">
+                                <div class="row justify-content-around">
+                                    <div class="col-4">
+                                        <strong>SOURCE</strong> {{ job.source_language }}
+                                        <span></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <strong>TARGET</strong> {{ job.target_language }}
+                                    </div>
+                                </div>
+
+                                <div class="row justify-content-around">
+                                    <div class="col-4">
+                                        <strong>JOB FIELD</strong> {{ job.get_field_display }}
+                                    </div>
+
+                                    <div class="col-4">
+                                        <strong>BUDGET</strong> {{ job.budget }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row"><p></p></div>
+
+                            <div class="row">
+                                <p class="col-12"><strong>Source text:</strong> {{ job.source_text }}</p>
+                            </div>
+
+                            <div class="row justify-content-around">
+                                {% if not job.user == user and user.is_translator %}   
+                                
+                                    <p class="btn btn-primary"><a href="{% url 'app:job_bidding' job.id %}" class="text-white">Bid on Job</a></p>
+                                
+                                {% endif %}     
+
+                                {% if not job.user == user %}
+                                    <p class="btn btn-primary"><a href="{% url 'accounts:send_message' user.id job.user.id %}" class="text-white">Message User</a></p>
+                                {% endif %}
+                            </div> 
+                        </div> 
+                    </div>
+                    <br>
+                {% endfor %}
+                </div>
+            </div>
         </div>
-        <br>
-    {% endfor %}
+    </div>
 {% endblock %}
