@@ -1,30 +1,72 @@
 {% extends 'app/base.html' %}
 {% block content %}
+{% load widget_tweaks %}
+ 
+<div class="card mb-3 border-primary p-3">
+    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2 mb-4">Bid on a job</h2>
 
-    <h1>Bid on a job</h1>
-    <div>
-        <div>
-            <p>Title: {{ job.title }}</p>
-            <p>Description: {{ job.description }}</p>
-            <p>Source language: {{ job.source_language }}</p>
-            <p>Target language: {{ job.target_language }}</p>
-            <p>Job field: {{ job.get_field_display }}</p>
-            <p>Budget: {{ job.budget }}</p>
-            <p>Source text: {{ job.source_text }}</p>
-            <p>By: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user }}</a></p>
-            {% if not job.user == user %}
-                <p><a href="{% url 'accounts:send_message' user.id job.user.id %}">Message User</a></p>
-            {% endif %}
-        </div>
+    <div class="container overflow-hidden">
+        <div class="row">
 
-        <div>
-            <form method="post">
-                {% csrf_token %}
+            <div class="col-6">
+                <div class="card border-primary mb-3">
+                    <div class="card-header text-primary">Job info - {{ job.title }}</div>
+                    <div class="card-body text-primary">
+                        <h2 class="card-title">From {{ job.source_language }} to {{ job.target_language }}</h2>
+                        <h1 class="card-title">Budget: {{ job.budget }}</h1>
+                        <h4 class="card-title">Job field: {{ job.get_field_display }}</h4>
+                        <h5 class="card-title">Description: {{ job.description }}</h5>
+                        <p>Source text: {{ job.source_text }}</p>
+                    </div>
+                </div>
+                
+            </div>
 
-                {{ form.as_p }}
-            
-                <input type="submit" value="Bid">        
-            </form>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-4">
+                        <h2 class="text-primary">By: <strong><a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user.username }}</a></strong></h2>
+                    </div>
+                    <div class="col-8">
+                        {% if not job.user == user %}
+                            <p><a class="btn btn-primary" href="{% url 'accounts:send_message' user.id job.user.id %}">Message User</a></p>
+                        {% endif %}    
+                    </div>
+                </div>
+
+                <h2 class="card-title text-primary">Your bid</h2>
+
+                <form method="post">
+                    {% csrf_token %}
+                                
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                
+                    {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        {{ field|add_class:'form-control' }}
+                        {% for error in field.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                
+                    <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span> Send bid
+                    </button>
+                    </div>
+                </form>            
+            </div>
         </div>
     </div>
+</div>
+
 {% endblock %}
