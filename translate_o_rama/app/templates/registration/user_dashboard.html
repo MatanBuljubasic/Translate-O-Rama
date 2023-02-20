@@ -1,65 +1,157 @@
 {% extends 'app/base.html' %}
 {% block content %}
+{% load widget_tweaks %}
  
-<h1>User dashboard</h1>
+<h1 class="display-4">User dashboard</h1>
+<br>    
 
-<h2>User info</h2>
-<div>
-    <p>Username: {{ target_user.username }}</p>
-    <p>Email: {{ target_user.email }}</p>
-    {% if target_user == user %}
-        <p>Tokens: {{ user.tokens }}</p>
-    {% endif %}
-    {% if not target_user == user %}
-        <p><a href="{% url 'accounts:send_message' user.id target_user.id %}">Message User</a></p>
-    {% endif %}
-    {% if target_user.is_translator %}
-        {% if rating %}
-            <p>Rating: {{ rating }}</p>
-        {% else %}
-            <p>No ratings yet.</p>
-        {% endif %}
-    {% endif %}
-    <br>
+<div class="card border-primary mb-3">
+    <div class="card-header text-primary">User info</div>
+    <div class="card-body text-primary">
+        <div class="float-right font-weight-bold">
+            {% if target_user.is_translator %}
+                {% if rating %}
+                    <p>Rating: {{ rating }}</p>
+                {% else %}
+                    <p>No ratings yet.</p>
+                {% endif %}
+            {% endif %}
+            {% if target_user == user %}
+                <p>Tokens: {{ user.tokens }}</p>
+            {% endif %}
+
+            {% if not target_user == user %}
+                <p><a href="{% url 'accounts:send_message' user.id target_user.id %}" class="btn btn-primary">Message User</a></p>
+            {% endif %}
+        </div>
+
+        <h2 class="card-title">Username: {{ target_user.username }}</h2>
+        <h5 class="card-title">Email: {{ target_user.email }}</h5>
+    </div>
 </div>
 
-{% if user == target_user and submittedBids %}
-    <h2>Submitted bids</h2>
-    {% for bid in submittedBids %}
-        <div>
-            <p>Job title: {{ bid.job.title }}</p>
-            <p>Quote: {{ bid.quote }}</p>
-        </div>
-    {% endfor %}
-{% endif %}
+<div class="container overflow-hidden">
+    <div class="row">
+        <div class="col-6">
+            {% if user == target_user and submittedBids %}
+                <div class="card mb-3 border-primary p-3">
+                    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Submitted bids</h2>
 
-{% if postedJobs %}
-    <h2>Posted Jobs</h2>
-    {% for job in postedJobs %}
-        <div>
-            <p>Title: {{ job.title }}</p> 
-            <p>Description: {{ job.description }}</p>
-            <p>Source language: {{ job.source_language }}</p>
-            <p>Target language: {{ job.target_language }}</p>
-            <p>Job field: {{ job.get_field_display }}</p>
-            <p>Budget: {{ job.budget }}</p>
-            <p>Source text: {{ job.source_text }}</p>
-            {% if not job.user == user and user.is_translator %}   
-                <p><a href="{% url 'app:job_bidding' job.id %}">Bid on Job</a></p>
-            {% endif %}               
-            {% for biddingOffer in biddingOffers %}
-            <div>
-                {% if biddingOffer.job == job %}
-                    <p>Offer: {{biddingOffer.quote}} - <a href="{% url 'accounts:user_dashboard' biddingOffer.translator.id %}">{{biddingOffer.translator}}</a></p>
-                    {% if job.user == user %}
-                        <form method="post" action="{% url 'app:job_accept' job.id biddingOffer.id %}">
-                            {% csrf_token %}
-                            <input type="submit" value="Accept">  
-                        </form>
-                    {% endif %}
-                {% endif %}                    
+                    <div class="list-group">
+                        {% for bid in submittedBids %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start active my-1 rounded">
+                          <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Job title: {{ bid.job.title }}</h5>
+                            <span class="align-middle">Quote: {{ bid.quote }}</span>
+                          </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if postedJobs %}
+                <div class="card mb-3 border-primary p-3">
+                    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Posted Jobs</h2>
+                    <div class="list-group-item-action flex-column align-items-start active my-1 rounded">
+                        {% for job in postedJobs %}
+                        <div class="container card bg-white text-primary rounded pt-2 pb-2 my-1 border-primary">
+                            <div class="row text-center">
+                                <h3 class="col-12">Title: {{ job.title }}</h5>
+                            </div>
+
+                            <div class="row">
+                                <p class="col-12">Description: {{ job.description }}</p>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>SOURCE</strong> {{ job.source_language }}
+                                    <span></span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>TARGET</strong> {{ job.target_language }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>JOB FIELD</strong> {{ job.get_field_display }}
+                                </div>
+
+                                <div class="col-6">
+                                    <strong>BUDGET</strong> {{ job.budget }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <p class="col-12">Source text: {{ job.source_text }}</p>
+                            </div>
+
+                            <div class="row">
+                                {% if not job.user == user and user.is_translator %}   
+                                <div class="col-12">
+                                    <p class="btn btn-primary"><a href="{% url 'app:job_bidding' job.id %}" class="text-white">Bid on Job</a></p>
+                                </div>
+                                {% endif %}      
+                                
+                                {% for biddingOffer in biddingOffers %}
+                                <div class="col-6 text-center d-flex justify-content-between">
+                                    {% if biddingOffer.job == job %}
+                                        <div class="pr-1 align-middle">Offer: {{biddingOffer.quote}} - <a href="{% url 'accounts:user_dashboard' biddingOffer.translator.id %}">{{biddingOffer.translator.username}}</a></div>
+                                        {% if job.user == user %}
+                                            <form method="post" action="{% url 'app:job_accept' job.id biddingOffer.id %}">
+                                                {% csrf_token %}
+
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-primary">
+                                                    <span class="glyphicon glyphicon-ok"></span> Accept
+                                                    </button>
+                                                </div>
+                                            </form>
+
+
+                                        {% endif %}
+                                    {% endif %}                    
+                                </div>
+                                {% endfor %}
+                            </div> 
+                        </div>                         
+                    {% endfor %}
+                </div>
             </div>
-            {% endfor %}
+        {% endif %}
+
+        </div>
+    
+        <div class="col-6">
+            {% if user == target_user and messages %}
+                <div class="card mb-3 border-primary p-3">
+                    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Received messages</h2>
+                    <div class="list-group">
+                        {% for message in messages %}
+                            
+                            <div class="list-group-item list-group-item-action flex-column align-items-start active my-1 rounded">
+                                <div class="d-flex w-100 justify-content-between mt-6 mb-6">
+                                  <h5 class="mb-1">{{ message.sender }}</h5>
+                                  <span class="align-middle">{{ message.time }}</span>
+                                </div>
+                                <p class="mb-1">{{ message.text }}</p>
+                            </div>      
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>    
+    </div>
+</div>
+
+{% if user == target_user and disputes %}
+    <h2>Closed disputes</h2>
+    {% for dispute in disputes %}
+        <div>
+            <p>On {{ dispute.job.translator }} - {{ dispute.job.title }}</p>
+            <p>{{ dispute.reason }}</p>
         </div>
         <br>
     {% endfor %}
@@ -156,26 +248,6 @@
     {% endfor %}
 {% endif %}
 
-{% if user == target_user and messages %}
-        <h2>Received messages</h2>
-        {% for message in messages %}
-            <div>
-                <p>{{ message.sender }} - {{ message.time }}</p>
-                <p>{{ message.text }}</p>
-            </div>
-            <br>
-        {% endfor %}
-{% endif %}
 
-{% if user == target_user and disputes %}
-    <h2>Closed disputes</h2>
-    {% for dispute in disputes %}
-        <div>
-            <p>On {{ dispute.job.translator }} - {{ dispute.job.title }}</p>
-            <p>{{ dispute.reason }}</p>
-        </div>
-        <br>
-    {% endfor %}
-{% endif %}
 
 {% endblock %}
