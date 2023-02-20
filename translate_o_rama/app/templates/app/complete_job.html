@@ -1,19 +1,59 @@
 {% extends 'app/base.html' %}
 {% block content %}
+{% load widget_tweaks %}
  
-<h1>Translate job</h1>
-<p>Title: {{ job.title }}</p>
-<p>Source text: {{ job.source_text }}</p>
-<p>Source language: {{ job.source_language }}</p>
-<p>Target language: {{ job.target_language }}</p>
-<p>Description: {{ job.description }}</p>
+<div class="card mb-3 border-primary p-3">
+    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2 mb-4">Translate job</h2>
 
-<form method="post">
-    {% csrf_token %}
+    <div class="container overflow-hidden">
+        <div class="row">
 
-    {{ form.as_p }}
+            <div class="col-6">
+                <div class="card border-primary mb-3">
+                    <div class="card-header text-primary">Job info - {{ job.title }}</div>
+                    <div class="card-body text-primary">
+                        <h2 class="card-title">From {{ job.source_language }} to {{ job.target_language }}</h2>
+                        <h5 class="card-title">Description: {{ job.description }}</h5>
+                        <p>Source text: {{ job.source_text }}</p>
+                    </div>
+                </div>
+                
+            </div>
 
-    <input type="submit" value="Complete translation">
-</form>
+            <div class="col-6">
+                <form method="post">
+                    {% csrf_token %}
+                                
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                
+                    {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        {{ field|add_class:'form-control' }}
+                        {% for error in field.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                
+                    <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span> Send translation
+                    </button>
+                    </div>
+                </form>            
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 {% endblock %}
