@@ -1,20 +1,59 @@
 {% extends 'app/base.html' %}
 {% block content %}
- 
-<h1>Rate a job</h1>
-<h2>Title: {{ job.title }}</h2>
-<p>Source language: {{ job.source_language }}</p>
-<p>Source text: {{ job.source_text }}</p>
-<p>Target language: {{ job.target_language }}</p>
-<p>Translated text: {{ job.translated_text }}</p>
-<p>Description: {{ job.description }}</p>
+{% load widget_tweaks %}
 
-<form method="post">
-    {% csrf_token %}
+<div class="card mb-3 border-primary p-3">
+  <h2 class="text-center bg-primary text-white rounded pt-2 pb-2 mb-4">Rate job</h2>
 
-    {{ form.as_p }}
+<div class="container overflow-hidden">
+  <div class="row">
 
-    <input type="submit" value="Rate">
-</form>
+      <div class="col-6">
+          <div class="card border-primary mb-3">
+              <div class="card-header text-primary">Job info - {{ job.title }}</div>
+              <div class="card-body text-primary">
+                  <h2 class="card-title">From {{ job.source_language }} to {{ job.target_language }}</h2>
+                  <h5 class="card-title">Description: {{ job.description }}</h5>
+                  <p>Source text: {{ job.source_text }}</p>
+                  <p>Translated text: {{ job.translated_text }}</p>
+              </div>
+          </div>
+          
+      </div>
 
+      <div class="col-6">
+
+      <form method="post">
+          {% csrf_token %}
+
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+
+          {% for field in form.visible_fields %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field|add_class:'form-control' }}
+              {% for error in field.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+              <span class="glyphicon glyphicon-ok"></span> Rate job
+            </button>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
