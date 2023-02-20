@@ -122,6 +122,63 @@
             </div>
         {% endif %}
 
+        {% if user == target_user and assignedJobsUser %}
+            <div class="card mb-3 border-primary p-3">
+                <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Jobs assigned by {{ target_user.username }}</h2>
+                <div class="list-group-item-action flex-column align-items-start active my-1 rounded">
+                {% for job in assignedJobsUser %}
+                    <div class="container card bg-white text-primary rounded pt-2 pb-2 my-1 border-primary">
+                        <div class="row text-center">
+                            <h3 class="col-12">Title: {{ job.title }}</h5>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-12">Description: {{ job.description }}</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>SOURCE</strong> {{ job.source_language }}
+                                <span></span>
+                            </div>
+                            <div class="col-6">
+                                <strong>TARGET</strong> {{ job.target_language }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>JOB FIELD</strong> {{ job.get_field_display }}
+                            </div>
+
+                            <div class="col-6">
+                                <strong>BUDGET</strong> {{ job.budget }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-12">Source text: {{ job.source_text }}</p>
+                        </div>
+
+                        <div class="row">                            
+                            {% for biddingOffer in biddingOffers %}
+                            <div class="col-12 text-center d-flex justify-content-between">
+                                {% if biddingOffer.job == job %}
+                                    <div class="pr-1 align-middle">Accepted offer of {{biddingOffer.quote}} from translator: <strong><a href="{% url 'accounts:user_dashboard' biddingOffer.translator.id %}">{{biddingOffer.translator.username}}</a></strong></div>
+                                {% endif %}     
+                                               
+                            </div>
+                            {% endfor %}
+                        </div> 
+                    </div>                         
+                {% endfor %}
+            </div>
+            
+        </div>
+
+        {% endif %}
+
+
         </div>
     
         <div class="col-6">
@@ -142,6 +199,60 @@
                     </div>
                 </div>
             {% endif %}
+
+            {% if user == target_user and assignedJobsTranslator %}
+                <div class="card mb-3 border-primary p-3">
+                    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Jobs assigned to {{ target_user.username }}</h2>
+                    <div class="list-group-item-action flex-column align-items-start active my-1 rounded">
+                    {% for job in assignedJobsTranslator %}
+                        <div class="container card bg-white text-primary rounded pt-2 pb-2 my-1 border-primary">
+                            <div class="row text-center">
+                                <h3 class="col-12">Title: {{ job.title }}</h5>
+                            </div>
+    
+                            <div class="row">
+                                <p class="col-12">Description: {{ job.description }}</p>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>SOURCE</strong> {{ job.source_language }}
+                                    <span></span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>TARGET</strong> {{ job.target_language }}
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>JOB FIELD</strong> {{ job.get_field_display }}
+                                </div>
+    
+                                <div class="col-6">
+                                    <strong>BUDGET</strong> {{ job.budget }}
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <p class="col-12">Source text: {{ job.source_text }}</p>
+                            </div>
+    
+                            <div class="row">                            
+                                {% for biddingOffer in biddingOffers %}
+                                <div class="col-12 text-center d-flex justify-content-between">
+                                    {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
+                                        <div class="pr-1 align-middle">Job priced at {{biddingOffer.quote}} for: <strong><a href="{% url 'accounts:user_dashboard' job.user.id %}">{{job.user.username}}</a></strong></div>
+                                        <p><a  class="btn btn-primary text-white" href="{% url 'app:complete_job' job.id %}">Complete job</a></p>
+                                    {% endif %}                   
+                                </div>
+                                {% endfor %}
+                            </div> 
+                        </div>                         
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}   
         </div>    
     </div>
 </div>
@@ -157,46 +268,7 @@
     {% endfor %}
 {% endif %}
 
-{% if user == target_user and assignedJobsUser %}
-    <h2>Jobs assigned by {{ target_user.username }}</h2>
-    {% for job in assignedJobsUser %}
-        <p>Title: {{ job.title }}</p> 
-        <p>Description: {{ job.description }}</p>
-        <p>Source language: {{ job.source_language }}</p>
-        <p>Target language: {{ job.target_language }}</p>
-        <p>Job field: {{ job.get_field_display }}</p>
-        <p>Budget: {{ job.budget }}</p>
-        <p>Source text: {{ job.source_text }}</p>
-        <p>Translator: <a href="{% url 'accounts:user_dashboard' job.translator.id %}">{{job.translator}}</a></p>
-                {% for biddingOffer in biddingOffers %}
-                    {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
-                        <p>Accepted quote: {{biddingOffer.quote}}</p>
-                    {% endif %}
-                {% endfor %}
-            <br>              
-    {% endfor %}
-{% endif %}
 
-{% if user == target_user and assignedJobsTranslator %}
-    <h2>Jobs assigned to {{ target_user.username }}</h2>
-    {% for job in assignedJobsTranslator %}
-        <p>Title: {{ job.title }}</p> 
-        <p>Description: {{ job.description }}</p>
-        <p>Source language: {{ job.source_language }}</p>
-        <p>Target language: {{ job.target_language }}</p>
-        <p>Job field: {{ job.get_field_display }}</p>
-        <p>Budget: {{ job.budget }}</p>
-        <p>Source text: {{ job.source_text }}</p>
-        <p>For: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user }}</a></p>
-            {% for biddingOffer in biddingOffers %}
-                {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
-                    <p>Accepted quote: {{biddingOffer.quote}}</p>
-                {% endif %}
-            {% endfor %} 
-            <p><a href="{% url 'app:complete_job' job.id %}">Complete job</a></p>
-        <br>    
-    {% endfor %}
-{% endif %}
 
 {% if completedJobsUser %}
     <h2>Completed Jobs for {{ target_user.username }}</h2>
