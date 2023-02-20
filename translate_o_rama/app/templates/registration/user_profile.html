@@ -1,137 +1,355 @@
 {% extends 'app/base.html' %}
 {% block content %}
+{% load widget_tweaks %}
  
-<h1>User profile</h1>
+<h1 class="display-4">User profile</h1>
+<br>
 
-<h4>Username: {{ user.username }}</h4>
-{% if user.is_translator %}
-    {% if rating %}
-        <p>Rating: {{ rating }}</p>
-    {% else %}
-        <p>No ratings yet.</p>
-    {% endif %}
-{% endif %}
-<p>Your email: {{ user.email }}</p>
-
-<h2>Edit data</h2>
-
-<form method="post" action="{% url 'accounts:change_email' %}">
-    {% csrf_token %}
-
-    {{ emailForm.as_p }}
-
-    <input type="submit" value="Change your email address">
-</form>
+<div class="card border-primary mb-3">
+    <div class="card-header text-primary">User info</div>
+    <div class="card-body text-primary">
+        <h2 class="card-title">Username: {{ user.username }}</h2>
+        <h5 class="card-title">Email: {{ user.email }}</h5>
+        <p>Tokens: {{ user.tokens }}</p>
+    </div>
+</div>
 
 
-<form method="post" action="{% url 'accounts:change_password' %}">
-    {% csrf_token %}
+<div class="card mb-3 border-primary p-3">
+    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2 mb-4">Edit data</h2>
 
-    {{ passwordForm.as_p }}
+    <div class="container overflow-hidden">
+        <div class="row">
+            <div class="col-1"></div>
 
-    <input type="submit" value="Change your password">
-</form>
-
-{% if assignedJobsUser %}
-    <h2>Jobs assigned by you</h2>
-    {% for job in assignedJobsUser %}
-            <p>Title: {{ job.title }}</p> 
-            <p>Description: {{ job.description }}</p>
-            <p>Source language: {{ job.source_language }}</p>
-            <p>Target language: {{ job.target_language }}</p>
-            <p>Job field: {{ job.get_field_display }}</p>
-            <p>Budget: {{ job.budget }}</p>
-            <p>Source text: {{ job.source_text }}</p>
-            <p>Translator: <a href="{% url 'accounts:user_dashboard' job.translator.id %}">{{job.translator}}</a></p>
-                {% for biddingOffer in biddingOffers %}
-                    {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
-                        <p>Accepted quote: {{biddingOffer.quote}}</p>
+            <div class="col-4">
+                <form method="post">
+                    {% csrf_token %}
+                
+                    {{ emailForm.as_p }}
+                
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                
+                    {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        {{ field|add_class:'form-control' }}
+                        {% for error in field.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
                     {% endif %}
-                {% endfor %}
-            <br>              
-    {% endfor %}
-{% endif %}
+                
+                    <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span> Change your email address
+                    </button>
+                    </div>
+                </form>
+                        
+            </div>
 
-{% if completedJobsUser %}
-    <h2>Completed Jobs for you</h2>
-    {% for job in completedJobsUser %}
-        <p>Title: {{ job.title }}</p> 
-        <p>Description: {{ job.description }}</p>
-        <p>Source language: {{ job.source_language }}</p>
-        <p>Target language: {{ job.target_language }}</p>
-        <p>Job field: {{ job.get_field_display }}</p>
-        <p>Budget: {{ job.budget }}</p>
-        <p>Source text: {{ job.source_text }}</p>
-        <p>Translated text: {{ job.translated_text }}</p>
-        <p>Translator: <a href="{% url 'accounts:user_dashboard' job.translator.id %}">{{job.translator}}</a></p>
-            {% for biddingOffer in biddingOffers %}
-                {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
-                    <p>Accepted quote: {{biddingOffer.quote}}</p>
-                {% endif %}
-            {% endfor %} 
-            {% if user == job.user %}
-                <p><a href="{% url 'app:rate_job' job.id %}">Rate job</a></p>
-                <p><a href="{% url 'app:dispute_job' job.id %}">Dispute job</a></p>
-            {% endif %}
-        <br>
-    {% endfor %}
-{% endif %}
-
-{% if submittedBids %}
-    <h2>Submitted bids</h2>
-    {% for bid in submittedBids %}
-        <div>
-            <p>Title: {{ bid.job.title }}</p>
-            <p>Quote: {{ bid.quote }}</p>
+            <div class="col-7">
+                <form method="post">
+                    {% csrf_token %}
+                
+                    {{ passwordForm.as_p }}
+                
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                
+                    {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        {{ field|add_class:'form-control' }}
+                        {% for error in field.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                
+                    <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span> Change your password
+                    </button>
+                    </div>
+                </form>            
+            </div>
         </div>
-        <br>
-    {% endfor %}
-{% endif %}
+    </div>
+</div>
 
-{% if assignedJobsTranslator %}
-    <h2>Jobs assigned to you</h2>
-    {% for job in assignedJobsTranslator %}
-        <p>Title: {{ job.title }}</p> 
-        <p>Description: {{ job.description }}</p>
-        <p>Source language: {{ job.source_language }}</p>
-        <p>Target language: {{ job.target_language }}</p>
-        <p>Job field: {{ job.get_field_display }}</p>
-        <p>Budget: {{ job.budget }}</p>
-        <p>Source text: {{ job.source_text }}</p>
-        <p>For: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user }}</a></p>
-            {% for biddingOffer in biddingOffers %}
-                {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
-                    <p>Accepted quote: {{biddingOffer.quote}}</p>
-                {% endif %}
-            {% endfor %} 
-        <p><a href="{% url 'app:complete_job' job.id %}">Complete job</a></p>
-        <br>  
-    {% endfor %}
-{% endif %}
+<div class="container overflow-hidden">
+    <div class="row">
+        <div class="col-6">
+            {% if submittedBids %}
+                <div class="card mb-3 border-primary p-3">
+                    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Submitted bids</h2>
 
-{% if completedJobsTranslator %}
-    <h2>Completed Jobs by you</h2>
-        {% for job in completedJobsTranslator %}
-        <p>Title: {{ job.title }}</p> 
-        <p>Description: {{ job.description }}</p>
-        <p>Source language: {{ job.source_language }}</p>
-        <p>Target language: {{ job.target_language }}</p>
-        <p>Job field: {{ job.get_field_display }}</p>
-        <p>Budget: {{ job.budget }}</p>
-        <p>Source text: {{ job.source_text }}</p>
-        <p>Translated text: {{ job.translated_text }}</p>
-        <p>For: <a href="{% url 'accounts:user_dashboard' job.user.id %}">{{ job.user }}</a></p>
-            {% for biddingOffer in biddingOffers %}
-                {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
-                    <p>Accepted quote: {{biddingOffer.quote}}</p>
-                {% endif %}
-            {% endfor %} 
-            {% if user == job.user %}
-                <p><a href="{% url 'app:rate_job' job.id %}">Rate job</a></p>
-                <p><a href="{% url 'app:dispute_job' job.id %}">Dispute job</a></p>
+                    <div class="list-group">
+                        {% for bid in submittedBids %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start active my-1 rounded">
+                          <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Job title: {{ bid.job.title }}</h5>
+                            <span class="align-middle">Quote: {{ bid.quote }}</span>
+                          </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
             {% endif %}
-        <br>
-    {% endfor %}
-{% endif %}
 
+
+        {% if assignedJobsUser %}
+            <div class="card mb-3 border-primary p-3">
+                <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Jobs assigned by {{ user.username }}</h2>
+                <div class="list-group-item-action flex-column align-items-start active my-1 rounded">
+                {% for job in assignedJobsUser %}
+                    <div class="container card bg-white text-primary rounded pt-2 pb-2 my-1 border-primary">
+                        <div class="row text-center">
+                            <h3 class="col-12">Title: {{ job.title }}</h5>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-12">Description: {{ job.description }}</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>SOURCE</strong> {{ job.source_language }}
+                                <span></span>
+                            </div>
+                            <div class="col-6">
+                                <strong>TARGET</strong> {{ job.target_language }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>JOB FIELD</strong> {{ job.get_field_display }}
+                            </div>
+
+                            <div class="col-6">
+                                <strong>COST</strong> {{ job.budget }}
+                            </div>
+                        </div>
+
+                        <div class="row"><p></p></div>
+
+                        <div class="row">
+                            <p class="col-12">Source text: {{ job.source_text }}</p>
+                        </div>
+
+                        <div class="row">                            
+                            {% for biddingOffer in biddingOffers %}
+                            <div class="col-12 text-center d-flex justify-content-between">
+                                {% if biddingOffer.job == job %}
+                                    <div class="pr-1 align-middle">Accepted offer of {{biddingOffer.quote}} from translator: <strong><a href="{% url 'accounts:user_dashboard' biddingOffer.translator.id %}">{{biddingOffer.translator.username}}</a></strong></div>
+                                {% endif %}     
+                                               
+                            </div>
+                            {% endfor %}
+                        </div> 
+                    </div>                         
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if completedJobsUser %}
+        <div class="card mb-3 border-primary p-3">
+            <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Jobs completed for {{ user.username }}</h2>
+            <div class="list-group-item-action flex-column align-items-start active my-1 rounded">
+                {% for job in completedJobsUser %}
+                        <div class="container card bg-white text-primary rounded pt-2 pb-2 my-1 border-primary">
+                            <div class="row text-center">
+                                <h3 class="col-12">Title: {{ job.title }}</h5>
+                            </div>
+
+                            <div class="row">
+                                <p class="col-12">Description: {{ job.description }}</p>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>SOURCE</strong> {{ job.source_language }}
+                                    <span></span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>TARGET</strong> {{ job.target_language }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>JOB FIELD</strong> {{ job.get_field_display }}
+                                </div>
+
+                                <div class="col-6">
+                                    <strong>COST</strong> {{ job.budget }}
+                                </div>
+                            </div>
+
+                            <div class="row"><p></p></div>
+
+                            <div class="row">
+                                <p class="col-12">Source text: {{ job.source_text }}</p>
+                            </div>
+                            <div class="row">
+                                <p class="col-12">Translated text: {{ job.translated_text }}</p>
+                            </div>
+
+                            <div class="row justify-content-around">
+                                <div class="col-4"><p>Translated by: <strong><a href="{% url 'accounts:user_dashboard' job.translator.id %}">{{job.translator.username}}</a></strong></p></div>
+                                <div class="col-8">
+                                    <div class="row justify-content-around">
+                                        {% if user == job.user %}
+                                        <p><a class="btn btn-primary" href="{% url 'app:rate_job' job.id %}">Rate job</a></p>
+                                        <p><a class="btn btn-primary" href="{% url 'app:dispute_job' job.id %}">Dispute job</a></p>
+                                        {% endif %}    
+                                    </div>
+                                </div>       
+                            </div>
+                        </div>                         
+                    </div>
+                </div>
+        
+            {% endfor %}
+        {% endif %}
+
+        </div>
+    
+        <div class="col-6">
+            {% if assignedJobsTranslator %}
+                <div class="card mb-3 border-primary p-3">
+                    <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Jobs assigned to {{ user.username }}</h2>
+                    <div class="list-group-item-action flex-column align-items-start active my-1 rounded">
+                    {% for job in assignedJobsTranslator %}
+                        <div class="container card bg-white text-primary rounded pt-2 pb-2 my-1 border-primary">
+                            <div class="row text-center">
+                                <h3 class="col-12">Title: {{ job.title }}</h5>
+                            </div>
+    
+                            <div class="row">
+                                <p class="col-12">Description: {{ job.description }}</p>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>SOURCE</strong> {{ job.source_language }}
+                                    <span></span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>TARGET</strong> {{ job.target_language }}
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>JOB FIELD</strong> {{ job.get_field_display }}
+                                </div>
+    
+                                <div class="col-6">
+                                    <strong>COST</strong> {{ job.budget }}
+                                </div>
+                            </div>
+
+                            <div class="row"><p></p></div>
+    
+                            <div class="row">
+                                <p class="col-12">Source text: {{ job.source_text }}</p>
+                            </div>
+    
+                            <div class="row">                            
+                                {% for biddingOffer in biddingOffers %}
+                                <div class="col-12 text-center d-flex justify-content-between">
+                                    {% if biddingOffer.job == job and biddingOffer.translator == job.translator %}
+                                        <div class="pr-1 align-middle">Job priced at {{biddingOffer.quote}} for: <strong><a href="{% url 'accounts:user_dashboard' job.user.id %}">{{job.user.username}}</a></strong></div>
+                                        <p><a  class="btn btn-primary text-white" href="{% url 'app:complete_job' job.id %}">Complete job</a></p>
+                                    {% endif %}                   
+                                </div>
+                                {% endfor %}
+                            </div> 
+                        </div>                         
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}   
+            
+            {% if completedJobsTranslator %}
+            <div class="card mb-3 border-primary p-3">
+                <h2 class="text-center bg-primary text-white rounded pt-2 pb-2">Jobs completed by {{ user.username }}</h2>
+                <div class="list-group-item-action flex-column align-items-start active my-1 rounded">
+                    {% for job in completedJobsTranslator %}
+                        <div class="container card bg-white text-primary rounded pt-2 pb-2 my-1 border-primary">
+                            <div class="row text-center">
+                                <h3 class="col-12">Title: {{ job.title }}</h5>
+                            </div>
+
+                            <div class="row">
+                                <p class="col-12">Description: {{ job.description }}</p>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>SOURCE</strong> {{ job.source_language }}
+                                    <span></span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>TARGET</strong> {{ job.target_language }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>JOB FIELD</strong> {{ job.get_field_display }}
+                                </div>
+
+                                <div class="col-6">
+                                    <strong>COST</strong> {{ job.budget }}
+                                </div>
+                            </div>
+
+                            <div class="row"><p></p></div>
+
+                            <div class="row">
+                                <p class="col-12">Source text: {{ job.source_text }}</p>
+                            </div>
+                            <div class="row">
+                                <p class="col-12">Translated text: {{ job.translated_text }}</p>
+                            </div>
+
+                            <div class="row justify-content-around">
+                                <div class="col-4"><p>Translated for: <strong><a href="{% url 'accounts:user_dashboard' job.user.id %}">{{job.user.username}}</a></strong></p></div>
+                                <div class="col-8">
+                                    <div class="row justify-content-around">
+                                        {% if user == job.user %}
+                                        <p><a class="btn btn-primary" href="{% url 'app:rate_job' job.id %}">Rate job</a></p>
+                                        <p><a class="btn btn-primary" href="{% url 'app:dispute_job' job.id %}">Dispute job</a></p>
+                                        {% endif %}    
+                                    </div>
+                                </div>       
+                            </div>
+                        </div>  
+                        {% endfor %}
+                       
+                </div>
+            </div>
+        {% endif %}
+        </div>    
+    </div>
+</div>
 {% endblock %}
