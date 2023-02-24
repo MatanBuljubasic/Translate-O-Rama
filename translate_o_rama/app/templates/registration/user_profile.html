@@ -23,7 +23,7 @@
             <div class="col-1"></div>
 
             <div class="col-4">
-                <form method="post">
+                <form method="post" action="{% url 'accounts:change_email' %}">
                     {% csrf_token %}
                 
                     {{ emailForm.as_p }}
@@ -57,7 +57,7 @@
             </div>
 
             <div class="col-7">
-                <form method="post">
+                <form method="post" action="{% url 'accounts:change_password' %}">
                     {% csrf_token %}
                 
                     {{ passwordForm.as_p }}
